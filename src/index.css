@@ -1,0 +1,284 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Design tokens — "From Land to Ocean"
+ * ------------------------------------------------------------------ */
+@theme {
+  /* Palette */
+  --color-deep: #06283d;
+  --color-ocean: #0b4f6c;
+  --color-turquoise: #0e7490;
+  --color-seafoam: #99f6e4;
+  --color-sand: #e8dcc4;
+  --color-offwhite: #f8fafc;
+
+  /* Derived tints, kept few on purpose */
+  --color-deep-900: #041c2b;
+  --color-sand-soft: #f2ead9;
+
+  /* Typography */
+  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Editorial type scale (fluid) */
+  --text-display: clamp(3rem, 8vw, 8rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-title: clamp(2.25rem, 5.2vw, 4.5rem);
+  --text-title--line-height: 0.98;
+  --text-title--letter-spacing: -0.025em;
+
+  --text-heading: clamp(1.75rem, 3.2vw, 2.75rem);
+  --text-heading--line-height: 1.08;
+  --text-heading--letter-spacing: -0.02em;
+
+  --text-lead: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  --text-lead--line-height: 1.65;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Rhythm */
+  --spacing-section: clamp(5rem, 10vw, 9rem);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  /* Lenis drives scrolling; native smooth would fight it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  html.lenis {
+    scroll-behavior: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-deep);
+    color: var(--color-offwhite);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    /* Archivo is a variable font with a width axis — a touch condensed
+       reads more cinematic without a second family. */
+    font-stretch: 88%;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-seafoam);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-seafoam);
+    color: var(--color-deep);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Utilities
+ * ------------------------------------------------------------------ */
+@utility text-balance-none {
+  text-wrap: initial;
+}
+
+/* Hides content visually but keeps it for assistive tech. */
+@utility sr-only-focusable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+
+  &:focus {
+    position: fixed;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Keyframes
+ * ------------------------------------------------------------------ */
+
+/* Hero scroll cue: a highlight travelling down a hairline. */
+@keyframes hero-scroll {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(340%);
+  }
+}
+
+/* Ocean transition bubbles. Transform + opacity only, so each one stays
+   on the compositor and costs no layout work. */
+@keyframes bubble-rise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.55;
+  }
+  80% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translate3d(14px, -105svh, 0) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Berkas cahaya dari permukaan: bergoyang, tidak berdenyut. */
+@keyframes ray-sway {
+  0%,
+  100% {
+    transform: rotate(var(--ray-rotate, 0deg)) translateX(0) scaleY(1);
+  }
+  50% {
+    transform: rotate(calc(var(--ray-rotate, 0deg) + 2deg)) translateX(16px) scaleY(1.05);
+  }
+}
+
+/* Partikel tersuspensi — hanyut pelan, nyaris tak terlihat. */
+@keyframes mote-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.18;
+  }
+  50% {
+    transform: translate3d(18px, -26px, 0);
+    opacity: 0.5;
+  }
+}
+
+/* Pola caustic di bawah permukaan. */
+@keyframes caustic-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, 2%, 0) scale(1.08);
+  }
+}
+
+/* Gambar lightbox mendarat, bukan sekadar muncul. */
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion — content stays, movement goes.
+ * Animations set inline styles via GSAP, so the guard also lives in JS
+ * (see lib/gsap.ts). This handles the pure-CSS layer.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /*
+   * Panggung foto sticky — baik pada cerita lapangan maupun timeline —
+   * bergantung pada crossfade ter-scrub untuk berganti gambar. Tanpa
+   * animasi ia akan membeku pada foto pertama, jadi panelnya disembunyikan
+   * dan setiap bab atau entri kembali membawa fotonya sendiri, persis
+   * seperti tampilan di layar sempit.
+   */
+  [data-sticky-panel] {
+    display: none !important;
+  }
+
+  [data-inline-photo],
+  [data-chapter-photo] {
+    display: block !important;
+  }
+
+  /* Tanpa panggung sticky, kolom naskah tidak perlu lagi berbagi baris
+     grid — lebar bacanya tetap dijaga oleh `max-w` pada paragrafnya. */
+  [data-timeline-column],
+  [data-story-chapters] {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Custom cursor
+ * Kursor asli hanya disembunyikan di atas elemen yang memang digantikan
+ * oleh cincin kursor — bukan di seluruh halaman.
+ * ------------------------------------------------------------------ */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-cursor='view'] {
+    cursor: none;
+  }
+}
