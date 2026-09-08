@@ -43,19 +43,12 @@ export function CommunitySection() {
           </p>
         </div>
 
-        {/* The chain */}
         <div data-chain className="relative mt-24">
-          {/* Connector. A stretched viewBox keeps the path resolution
-              independent, so the dash animation works at any height. */}
-          {/* The wrapper carries the height: an <svg> with `height: auto`
-              falls back to its intrinsic 100px instead of stretching. */}
           <div
             aria-hidden="true"
             className="absolute top-2 bottom-2 left-5 w-0.5 [mask-image:linear-gradient(to_bottom,black_88%,transparent)] lg:left-1/2 lg:-translate-x-1/2"
           >
             <svg viewBox="0 0 2 100" preserveAspectRatio="none" className="h-full w-full">
-              {/* `non-scaling-stroke` keeps the 2px width honest despite the
-                  extreme vertical scaling of the viewBox. */}
               <path
                 d="M1 0 V100"
                 className="stroke-white/12"

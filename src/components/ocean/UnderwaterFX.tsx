@@ -1,10 +1,5 @@
 import { cn } from '@/lib/utils'
 
-/**
- * Posisi ditulis sebagai tabel tetap, bukan diacak saat render, supaya
- * tata letaknya stabil di setiap render. Jumlahnya ditahan kecil dengan
- * sengaja: belasan transform yang dikomposit tidak berbiaya, ratusan iya.
- */
 const BUBBLES = [
   { left: '8%', size: 6, delay: 0, duration: 15 },
   { left: '17%', size: 11, delay: 4.5, duration: 19 },

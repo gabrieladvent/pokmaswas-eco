@@ -18,15 +18,6 @@ export function Navbar() {
   const goToSection = useSectionNavigation()
   const { pathname } = useLocation()
 
-  /*
-   * Transparan → buram. Tidak dibatasi reduced motion: ini perubahan
-   * keadaan demi keterbacaan, bukan hiasan.
-   *
-   * Latarnya nyaris pekat (92%), bukan 72%. Navbar melayang di atas
-   * campuran foto dan bidang terang — terutama di halaman cerita — dan
-   * pada tingkat tembus yang lebih tinggi gambar di belakangnya menembus
-   * setempat, sehingga bilahnya terlihat belang alih-alih menyatu.
-   */
   useEffect(() => {
     const ctx = gsap.context(() => {
       createNavbarTransition(setScrolled)
@@ -34,19 +25,7 @@ export function Navbar() {
     return () => ctx.revert()
   }, [])
 
-  /*
-   * Bagian yang sedang aktif. Memakai ScrollTrigger, bukan
-   * IntersectionObserver, karena section Peran yang di-pin mengacaukan
-   * perhitungan perpotongan yang naif.
-   *
-   * Dibangun ulang tiap kali rute berubah: setelah berpindah halaman,
-   * bagian-bagian yang lama sudah tidak ada di DOM, jadi trigger yang
-   * menunjuk ke sana harus dibuang dan dipasang lagi.
-   */
   useLayoutEffect(() => {
-    // Halaman cerita tidak punya bagian-bagian beranda. Tanpa reset ini,
-    // sorotan terakhir dari beranda ikut terbawa dan satu butir menu
-    // tetap tampak aktif padahal pengunjung sudah pindah halaman.
     setActiveHref('')
 
     const ctx = gsap.context(() => {
@@ -65,7 +44,6 @@ export function Navbar() {
       }
     })
 
-    // Sections mount with the page; refresh once measurements settle.
     const refresh = window.setTimeout(() => ScrollTrigger.refresh(), 0)
 
     return () => {

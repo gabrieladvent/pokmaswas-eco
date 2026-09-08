@@ -1,4 +1,3 @@
-/** Controls the tile footprint inside the editorial CSS grid. */
 export type GallerySpan = 'wide' | 'tall' | 'large' | 'regular'
 
 export interface GalleryImage {

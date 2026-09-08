@@ -8,7 +8,6 @@ export interface ContainerProps {
   readonly children: ReactNode
   readonly width?: ContainerWidth
   readonly className?: string
-  /** Rendered element — lets the container carry semantics where useful. */
   readonly as?: ElementType
 }
 

@@ -17,7 +17,6 @@ export function GallerySection() {
     createGalleryAnimation(root)
   })
 
-  // Bentuk galeri dipetakan sekali ke bentuk yang dipahami lightbox.
   const lightboxItems = useMemo(
     () =>
       galleryImages.map((image) => ({
@@ -29,8 +28,6 @@ export function GallerySection() {
     [],
   )
 
-  // Identitas yang stabil menjaga tile tidak ikut render ulang saat
-  // state lightbox berubah.
   const handleOpen = useCallback((index: number) => setOpenIndex(index), [])
   const handleClose = useCallback(() => setOpenIndex(null), [])
   const handleNavigate = useCallback((index: number) => setOpenIndex(index), [])

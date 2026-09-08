@@ -8,18 +8,6 @@ import { UnderwaterFX } from './UnderwaterFX'
 
 const ASCENT_PHOTO = 'photo-1559825481-12a05cc00344'
 
-/**
- * Kenaikan.
- *
- * Setelah kegiatan lapangan dan masyarakat, perjalanan kembali ke laut —
- * kali ini menghadap ke atas. Kolom cahaya dari permukaan tumbuh mengikuti
- * scroll, jadi bagian ini terbaca sebagai naik menuju terang, kebalikan
- * dari `OceanTransition` yang membawa pembaca turun.
- *
- * Sama seperti transisi turun, salinannya ditahan di kotak sticky setinggi
- * viewport, dan lapis dekoratif ter-clip di wadahnya sendiri agar sticky
- * tetap bekerja.
- */
 export function FinalTransition() {
   const ref = useRef<HTMLElement>(null)
 
@@ -44,7 +32,6 @@ export function FinalTransition() {
           />
         </div>
 
-        {/* Cahaya permukaan — tumbuh dari atas seiring pembaca naik. */}
         <div
           data-final-light
           className="absolute inset-x-0 top-0 h-[85%] origin-top bg-[radial-gradient(ellipse_55%_60%_at_50%_0%,rgba(153,246,228,0.3),transparent_70%)]"

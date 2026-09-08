@@ -3,19 +3,6 @@ import { useEffect, useRef } from 'react'
 import { useIsDesktop, useMediaQuery, usePrefersReducedMotion } from '@/hooks/useMediaQuery'
 import { gsap } from '@/lib/gsap'
 
-/**
- * Cincin kecil yang mengikuti kursor.
- *
- * Kursor asli **tidak** disembunyikan secara global — hanya di atas
- * elemen yang menyatakan `data-cursor`, di mana cincin ini mengambil
- * alih perannya. Menyembunyikannya di seluruh halaman membuat kontrol
- * form dan teks terasa asing, dan itu bukan pertukaran yang sepadan
- * demi sebuah efek.
- *
- * Posisinya digerakkan `gsap.quickTo` — satu tween yang dipakai ulang tiap
- * frame, bukan state React, sehingga gerakan kursor tidak pernah
- * menyebabkan render.
- */
 export function Cursor() {
   const isDesktop = useIsDesktop()
   const hasFinePointer = useMediaQuery('(hover: hover) and (pointer: fine)')

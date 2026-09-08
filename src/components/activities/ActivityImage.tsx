@@ -3,26 +3,13 @@ import { cn } from '@/lib/utils'
 export interface ActivityImageProps {
   readonly src: string
   readonly alt: string
-  /** Kelas bingkai — atur rasio dan sudut di sini. */
   readonly className?: string
   readonly imageClassName?: string
   readonly sizes?: string
   readonly priority?: boolean
-  /** Skala saat kartu induknya di-hover. */
   readonly hoverScale?: boolean
 }
 
-/**
- * Bingkai foto untuk seluruh bagian kegiatan.
- *
- * Tiga lapis, masing-masing satu tugas: bingkai yang di-clip
- * (`data-parallax`), lapis penggeser (`data-parallax-shift`), dan
- * gambarnya sendiri. Animasinya dipasang dari `animations/activities/`
- * lewat atribut itu — komponen ini tidak tahu apa-apa soal GSAP.
- *
- * Lapis penggeser dibuat lebih besar dari bingkai supaya parallax tidak
- * pernah menyingkap tepi kosong.
- */
 export function ActivityImage({
   src,
   alt,

@@ -4,18 +4,10 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 import { lockScroll, unlockScroll } from '@/lib/scroll'
 
-/**
- * Bentuk minimal yang dibutuhkan lightbox.
- *
- * Sengaja dibuat sesempit ini agar galeri editorial maupun kumpulan foto
- * per kegiatan bisa memakai komponen yang sama tanpa saling menyesuaikan
- * tipe datanya.
- */
 export interface LightboxItem {
   readonly src: string
   readonly alt: string
   readonly caption: string
-  /** Baris kecil di bawah caption — lokasi, tanggal, apa pun. */
   readonly meta?: string
 }
 
@@ -24,7 +16,6 @@ export interface LightboxProps {
   readonly index: number
   readonly onClose: () => void
   readonly onNavigate: (index: number) => void
-  /** Dibacakan sebagai konteks oleh pembaca layar. */
   readonly label?: string
 }
 
@@ -78,8 +69,6 @@ export function Lightbox({ items, index, onClose, onNavigate, label }: LightboxP
       </div>
 
       <div className="flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-8">
-        {/* `key` memaksa elemen baru tiap perpindahan, sehingga animasi
-            masuknya berjalan lagi alih-alih gambar bertukar diam-diam. */}
         <img
           key={item.src}
           src={item.src}

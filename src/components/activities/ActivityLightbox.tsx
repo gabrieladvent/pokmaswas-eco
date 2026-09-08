@@ -12,12 +12,6 @@ export interface ActivityLightboxProps {
   readonly onNavigate: (index: number) => void
 }
 
-/**
- * Membungkus lightbox bersama dengan bentuk data kegiatan.
- *
- * Foto sampul selalu jadi yang pertama, diikuti foto pendukungnya —
- * urutan yang sama dengan cara cerita itu dibaca.
- */
 export function ActivityLightbox({
   activity,
   index,

@@ -2,7 +2,6 @@ import { MEDIA, ScrollTrigger, gsap } from '@/lib/gsap'
 import { createChapterHeadingReveal, createChapterReveal } from './activityReveal'
 import { primeVisualStage, transitionToVisual, usesReducedEffects } from './activityImageTransition'
 
-/** Menyalakan `data-active` pada elemen ber-`data-index` yang cocok. */
 function syncIndexed(root: Element, selector: string, activeIndex: number): void {
   for (const element of root.querySelectorAll<HTMLElement>(selector)) {
     const index = Number.parseInt(element.dataset.index ?? '-1', 10)
@@ -10,16 +9,6 @@ function syncIndexed(root: Element, selector: string, activeIndex: number): void
   }
 }
 
-/**
- * Inti field journal: satu posisi scroll menggerakkan tiga hal sekaligus.
- *
- *   teks bergulir → gambar berganti → progres bergeser
- *
- * Bab yang sedang dilewati ditandai lewat atribut DOM, bukan state React.
- * Membaca satu cerita berarti belasan pergantian, dan tidak satu pun perlu
- * memicu render ulang — indikator progres pun hanya menyalakan label yang
- * sudah dirender bertumpuk, sehingga tidak ada teks yang perlu diganti.
- */
 export function createActivityStory(root: HTMLElement): void {
   createChapterHeadingReveal(root)
   createChapterReveal(root)
@@ -30,9 +19,6 @@ export function createActivityStory(root: HTMLElement): void {
   const visuals = Array.from(root.querySelectorAll<HTMLElement>('[data-story-visual]'))
   const track = root.querySelector<HTMLElement>('[data-story-chapters]')
   const bar = root.querySelector<HTMLElement>('[data-progress-bar]')
-
-  // Panggung gambar hanya hidup di desktop; di bawah itu tiap bab membawa
-  // fotonya sendiri (lihat `ActivityChapter`).
   const mm = gsap.matchMedia()
 
   mm.add(MEDIA.desktop, () => {
@@ -40,8 +26,6 @@ export function createActivityStory(root: HTMLElement): void {
   })
 
   if (bar && track) {
-    // scaleX jauh lebih murah daripada menganimasikan lebar, dan tetap di
-    // compositor sepanjang scrub.
     gsap.fromTo(
       bar,
       { scaleX: 0 },
@@ -63,8 +47,6 @@ export function createActivityStory(root: HTMLElement): void {
   chapters.forEach((chapter, index) => {
     ScrollTrigger.create({
       trigger: chapter,
-      // Garis aktif sedikit di atas tengah layar: di situlah mata pembaca
-      // berada saat menggulir, bukan tepat di tengah.
       start: 'top 58%',
       end: 'bottom 58%',
       invalidateOnRefresh: true,
@@ -84,13 +66,6 @@ export function createActivityStory(root: HTMLElement): void {
   })
 }
 
-/**
- * Penutup cerita.
- *
- * Setelah bab terakhir, panggung gambar meredup dan warna laut naik
- * menggantikannya — supaya perpindahan ke bagian berikutnya terasa
- * menyambung, bukan terpotong.
- */
 export function createStoryOutro(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
   const outro = root.querySelector<HTMLElement>('[data-story-outro]')
@@ -121,12 +96,6 @@ export function createStoryOutro(root: HTMLElement): void {
   })
 }
 
-/**
- * Timeline kegiatan lain.
- *
- * Sama seperti cerita, status aktif ditulis sebagai atribut DOM dan
- * penekanan visualnya diserahkan ke CSS.
- */
 export function createActivityTimeline(root: HTMLElement): void {
   const track = root.querySelector<HTMLElement>('[data-timeline-track]')
   const progress = root.querySelector<HTMLElement>('[data-timeline-progress]')

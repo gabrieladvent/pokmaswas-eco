@@ -10,24 +10,10 @@ import { ActivityProgress } from './ActivityProgress'
 
 export interface ActivityStoryProps {
   readonly activity: Activity
-  /** Beranda hanya menampilkan beberapa bab pertama; sisanya di halaman
-   *  ceritanya sendiri. Biarkan kosong untuk menampilkan semuanya. */
   readonly maxChapters?: number
   readonly onOpenGallery?: (slug: string) => void
 }
 
-/**
- * Cerita lapangan dengan panggung gambar yang menempel.
- *
- * Di desktop kolom kanan diam (`position: sticky`) sementara naskah di
- * kiri bergulir; gambar dan indikator progres berganti mengikuti bab yang
- * sedang dilewati. Naskah panjang jadi terasa seperti diikuti, bukan
- * ditumpuk — satu bab pada satu waktu, dengan gambar yang menjelaskannya.
- *
- * Di bawah `lg` panggung sticky tidak dipakai sama sekali: setiap bab
- * membawa fotonya sendiri dan semuanya tersusun ke bawah, yang lebih masuk
- * akal untuk layar sempit dan jauh lebih murah dijalankan.
- */
 export function ActivityStory({ activity, maxChapters, onOpenGallery }: ActivityStoryProps) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -40,7 +26,6 @@ export function ActivityStory({ activity, maxChapters, onOpenGallery }: Activity
 
   return (
     <div data-story ref={ref}>
-      {/* Kepala jurnal */}
       <header className="max-w-3xl">
         <p
           data-reveal
@@ -75,11 +60,6 @@ export function ActivityStory({ activity, maxChapters, onOpenGallery }: Activity
         </p>
       </header>
 
-      {/* Badan cerita */}
-      {/* Tanpa `items-start`: kolom panggung harus ikut setinggi baris grid,
-          karena kotak sticky di dalamnya hanya bisa menempel sepanjang
-          induknya. Dengan `items-start` kolomnya sependek isinya dan
-          gambar ikut tergulir pergi. */}
       <div className="mt-16 lg:grid lg:grid-cols-12 lg:gap-14 xl:gap-20">
         <div data-story-chapters className="lg:col-span-6">
           {chapters.map((chapter, index) => (
@@ -87,20 +67,14 @@ export function ActivityStory({ activity, maxChapters, onOpenGallery }: Activity
           ))}
         </div>
 
-        {/* Panggung gambar yang menempel */}
         <div data-story-stage data-sticky-panel className="hidden lg:col-span-6 lg:block">
           <div className="sticky top-[13vh]">
-            {/* Tinggi dipatok ke viewport, bukan rasio: kotak sticky harus muat
-                utuh bersama indikator progres di bawahnya, kalau tidak
-                indikatornya terdorong keluar layar. */}
             <div className="relative h-[58vh] min-h-[26rem] overflow-hidden rounded-sm bg-sand-soft">
               {chapters.map((chapter, index) => (
                 <div
                   key={chapter.id}
                   data-story-visual
                   data-index={index}
-                  // Bab pertama sudah terlihat sejak awal, sehingga panggung
-                  // tetap benar bila animasi tidak pernah berjalan.
                   className={cn('absolute inset-0', index === 0 ? 'opacity-100' : 'opacity-0')}
                 >
                   <img
@@ -115,7 +89,6 @@ export function ActivityStory({ activity, maxChapters, onOpenGallery }: Activity
                 </div>
               ))}
 
-              {/* Pasang naik saat cerita ditutup — lihat `createStoryOutro`. */}
               <div
                 data-story-tide
                 aria-hidden="true"
@@ -128,7 +101,6 @@ export function ActivityStory({ activity, maxChapters, onOpenGallery }: Activity
         </div>
       </div>
 
-      {/* Penutup cerita */}
       <div data-story-outro className="mt-4 border-t border-deep/10 pt-10 lg:mt-0">
         {hiddenChapters > 0 ? (
           <p className="font-body text-sm text-deep/50">

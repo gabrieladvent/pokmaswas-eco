@@ -1,11 +1,3 @@
-/**
- * Organisation-level facts.
- *
- * NOTE FOR MAINTAINERS — the placeholder fields below are intentionally
- * empty rather than filled with invented values. Replace them with the
- * group's real details before publishing; the UI already handles the
- * empty state gracefully.
- */
 export const site = {
   name: 'Pokmaswas San Dominggo',
   shortName: 'POKMASWAS',
@@ -20,7 +12,6 @@ export const site = {
     province: 'Nusa Tenggara Timur',
     country: 'Indonesia',
   },
-  /** TODO: fill in with the group's official contact details. */
   contact: {
     email: '',
     phone: '',

@@ -2,10 +2,6 @@ export interface ScrollIndicatorProps {
   readonly label?: string
 }
 
-/**
- * Purely decorative: the journey it hints at is also reachable through
- * the hero's own call to action, so it is hidden from assistive tech.
- */
 export function ScrollIndicator({ label = 'Gulir' }: ScrollIndicatorProps) {
   return (
     <div

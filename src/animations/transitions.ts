@@ -1,15 +1,6 @@
 import { MEDIA, gsap } from '@/lib/gsap'
 import { createWordReveal } from './textAnimations'
 
-/**
- * The descent: sand → shallow → turquoise → deep ocean.
- *
- * The colour is driven by scroll progress rather than by discrete
- * sections, so the change is continuous — the viewer is always *between*
- * two depths, never snapping from one to the next. Everything downstream
- * of this section is dark, which is what makes the transition feel like
- * crossing a surface.
- */
 export function createOceanTransition(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 
@@ -31,7 +22,6 @@ export function createOceanTransition(root: HTMLElement): void {
     .to(root, { backgroundColor: '#0e7490', ease: 'none', duration: 1 })
     .to(root, { backgroundColor: '#06283d', ease: 'none', duration: 1.2 })
 
-  // Underwater photograph surfaces as we sink into it.
   tl.fromTo(
     q('[data-ocean-image]'),
     { opacity: 0 },
@@ -39,7 +29,6 @@ export function createOceanTransition(root: HTMLElement): void {
     0.6,
   )
 
-  // Copy holds the centre of the frame, then sinks past it.
   tl.fromTo(
     q('[data-ocean-copy]'),
     { opacity: 0, y: 60 },
@@ -52,10 +41,6 @@ export function createOceanTransition(root: HTMLElement): void {
   })
 }
 
-/**
- * Slow push on the closing frame. Small numbers on purpose — the section
- * is the last thing before the footer and should settle, not lurch.
- */
 export function createCtaTransition(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 
@@ -81,11 +66,6 @@ export function createCtaTransition(root: HTMLElement): void {
   })
 }
 
-/**
- * Fades the navbar from transparent to blurred once the hero is behind
- * us. Driven by ScrollTrigger state rather than a scroll listener so it
- * stays in sync with Lenis.
- */
 export function createNavbarTransition(
   onChange: (scrolled: boolean) => void,
   triggerDistance = 80,
@@ -100,13 +80,6 @@ export function createNavbarTransition(
   })
 }
 
-/**
- * Kenaikan menuju permukaan — pasangan dari `createOceanTransition`.
- *
- * Cahaya tumbuh dari atas, foto perlahan menajam dari blur, dan salinan
- * ditahan di tengah sebelum akhirnya ikut naik. Semuanya ter-scrub,
- * sehingga menggulir balik benar-benar membalikkan kenaikan itu.
- */
 export function createFinalTransition(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 
@@ -143,8 +116,6 @@ export function createFinalTransition(root: HTMLElement): void {
   )
 
   gsap.matchMedia().add(MEDIA.desktop, () => {
-    // Blur → tajam hanya di desktop: memburamkan gambar seukuran layar
-    // penuh mahal, dan pada layar kecil nyaris tidak terbaca.
     tl.fromTo(
       q('[data-final-image]'),
       { filter: 'blur(14px)' },
@@ -152,7 +123,6 @@ export function createFinalTransition(root: HTMLElement): void {
       0,
     )
 
-    // Salinan ikut naik pelan di sepertiga terakhir.
     tl.to(q('[data-final-copy]'), { yPercent: -10, ease: 'none', duration: 1 }, 1.4)
   })
 }

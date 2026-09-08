@@ -60,8 +60,6 @@ function AppShell() {
   return (
     <>
       <Navbar />
-      {/* Indikator bagian hanya bermakna di beranda; halaman cerita tidak
-          punya bagian-bagian itu. */}
       {pathname === '/' ? <ScrollProgress /> : null}
 
       <main id="konten-utama">

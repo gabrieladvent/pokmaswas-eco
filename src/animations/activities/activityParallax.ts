@@ -1,18 +1,10 @@
 import { MEDIA, gsap } from '@/lib/gsap'
 
-/**
- * Parallax untuk gambar bercerita.
- *
- * Menggeser `[data-parallax-shift]` di dalam bingkainya yang ter-clip.
- * Elemen di dalamnya dibuat lebih besar dari bingkai, jadi gerakan ini
- * tidak pernah menyingkap tepi kosong.
- */
 export function createStoryParallax(root: Element, selector = '[data-parallax]'): void {
   const frames = Array.from(root.querySelectorAll<HTMLElement>(selector)).filter(
-    // Elemen `display: none` berukuran nol; membuat ScrollTrigger untuknya
-    // menghasilkan start dan end di titik yang sama.
     (frame) => frame.getClientRects().length > 0,
   )
+
   if (frames.length === 0) return
 
   const mm = gsap.matchMedia()
@@ -40,11 +32,8 @@ export function createStoryParallax(root: Element, selector = '[data-parallax]')
 
   mm.add(MEDIA.desktop, build(14))
   mm.add(MEDIA.tablet, build(8))
-  // Ponsel tidak mendapat parallax gambar: biayanya nyata, hasilnya nyaris
-  // tidak terlihat pada layar setinggi itu.
 }
 
-/** Dorongan lambat pada hero halaman kegiatan. */
 export function createDetailHeroParallax(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 

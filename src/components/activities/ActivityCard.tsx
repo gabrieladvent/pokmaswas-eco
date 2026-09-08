@@ -9,26 +9,10 @@ import { ActivityImage } from './ActivityImage'
 export interface ActivityCardProps {
   readonly activity: Activity
   readonly index?: number
-  /** Ditampilkan bila kegiatan ini membuka tahun baru di timeline. */
   readonly yearMarker?: string
-  /**
-   * `timeline` — satu baris di dalam timeline vertikal.
-   * `preview` — kartu untuk "Kegiatan Berikutnya" di akhir sebuah cerita.
-   */
   readonly variant?: 'timeline' | 'preview'
 }
 
-/**
- * Satu kegiatan dalam bentuk ringkas.
- *
- * Status aktif tidak disimpan di React: `createActivityTimeline` menulis
- * atribut `data-active` langsung ke DOM saat baris melintasi viewport, dan
- * seluruh penekanan visual di bawah ini bereaksi lewat CSS.
- *
- * Hanya kegiatan yang punya dua bab atau lebih yang ditautkan ke halaman
- * ceritanya — sisanya cukup dengan ringkasan, tanpa tautan yang membawa ke
- * halaman nyaris kosong.
- */
 export function ActivityCard({
   activity,
   index = 0,
@@ -115,9 +99,6 @@ export function ActivityCard({
         )}
       />
 
-      {/* Baris indeks editorial: tanggal di kolom sendiri, naskah di
-          tengah, foto kecil di ujung — supaya lebar halaman terpakai
-          alih-alih menyisakan separuh kolom kosong. */}
       <article className="pb-16 lg:grid lg:grid-cols-[9rem_minmax(0,1fr)_13rem] lg:items-start lg:gap-10 lg:pb-24">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-body text-[0.6875rem] tracking-[0.2em] uppercase lg:flex-col lg:gap-2">
           <time dateTime={activity.date} className="text-deep/45">
@@ -131,14 +112,14 @@ export function ActivityCard({
 
         <div>
           <div>
-          {linked ? (
-            <Link to={`/kegiatan/${activity.slug}`} data-cursor="link" className="inline-block">
-              {title}
-            </Link>
-          ) : (
-            title
-          )}
-        </div>
+            {linked ? (
+              <Link to={`/kegiatan/${activity.slug}`} data-cursor="link" className="inline-block">
+                {title}
+              </Link>
+            ) : (
+              title
+            )}
+          </div>
 
           <p className="mt-4 font-body text-[0.9375rem] leading-relaxed text-deep/60">
             {activity.excerpt}
@@ -173,8 +154,6 @@ export function ActivityCard({
           ) : null}
         </div>
 
-        {/* Foto kecil di ujung baris, desktop saja — versi selebar layar
-            sudah ditampilkan di dalam kolom naskah. */}
         <div className="hidden lg:block">
           <ActivityImage
             src={activity.coverImage}

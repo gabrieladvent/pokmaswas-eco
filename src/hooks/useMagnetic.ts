@@ -2,15 +2,6 @@ import { useEffect, useRef } from 'react'
 
 import { gsap, prefersReducedMotion } from '@/lib/gsap'
 
-/**
- * Tarikan magnetik ringan ke arah kursor.
- *
- * Digerakkan `gsap.quickTo` — satu tween yang dipakai ulang tiap frame,
- * bukan state React, jadi menggerakkan tetikus tidak pernah memicu render.
- *
- * Hanya aktif untuk penunjuk presisi: pada layar sentuh tidak ada kursor
- * untuk ditarik, dan efeknya justru membuat ketukan terasa meleset.
- */
 export function useMagnetic<T extends HTMLElement>(strength = 0.22) {
   const ref = useRef<T>(null)
 

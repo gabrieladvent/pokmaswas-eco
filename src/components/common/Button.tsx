@@ -14,7 +14,6 @@ interface CommonProps {
   readonly size?: ButtonSize
   readonly icon?: LucideIcon
   readonly className?: string
-  /** Tarikan magnetik halus ke arah kursor. Desktop saja. */
   readonly magnetic?: boolean
 }
 
@@ -42,11 +41,6 @@ const SIZES: Record<ButtonSize, string> = {
   lg: 'px-7 py-4 text-[0.9375rem]',
 }
 
-/**
- * Renders a `<button>` by default, or an `<a>` when `as="a"`, so that
- * link-shaped and action-shaped calls to action stay visually identical
- * without duplicating styles.
- */
 export function Button({
   children,
   variant = 'primary',
@@ -56,7 +50,6 @@ export function Button({
   magnetic = false,
   ...rest
 }: ButtonProps) {
-  // Hook selalu dipanggil; hanya ref-nya yang dipasang atau tidak.
   const magneticRef = useMagnetic<HTMLElement>()
   const ref = magnetic ? magneticRef : undefined
   const classes = cn(BASE, VARIANTS[variant], SIZES[size], className)

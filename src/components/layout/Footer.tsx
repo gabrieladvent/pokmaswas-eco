@@ -12,7 +12,6 @@ export function Footer() {
 
   return (
     <footer id="kontak" className="relative overflow-hidden bg-deep-900 pt-24 pb-10 text-offwhite">
-      {/* A last suggestion of water beneath everything. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-turquoise/50 to-transparent"
@@ -79,8 +78,6 @@ export function Footer() {
               {socialLinks.map((social) => (
                 <li key={social.label}>
                   {social.placeholder ? (
-                    // No account yet — shown as plain text rather than a
-                    // link that goes nowhere.
                     <span className="font-body text-[0.9375rem] text-offwhite/35">
                       {social.label}
                       <span className="sr-only"> (belum tersedia)</span>

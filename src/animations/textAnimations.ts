@@ -5,17 +5,10 @@ export interface TextRevealConfig {
   readonly stagger?: number
   readonly start?: string
   readonly duration?: number
-  /** Tambahkan transisi blur → tajam. Dimatikan otomatis di bawah desktop. */
   readonly blur?: boolean
   readonly trigger?: Element
 }
 
-/**
- * Reveal per baris: baris terangkat dari balik mask.
- *
- * Dipakai untuk heading pendek, di mana memecah per kata tidak menambah
- * apa pun selain pekerjaan.
- */
 export function createLineReveal(root: Element, config: TextRevealConfig = {}): void {
   const { selector = '[data-line]', stagger = 0.1, start = 'top 78%', duration = 1.35 } = config
   const lines = root.querySelectorAll(selector)
@@ -30,13 +23,6 @@ export function createLineReveal(root: Element, config: TextRevealConfig = {}): 
   })
 }
 
-/**
- * Reveal per kata — editorial, bukan mesin tik.
- *
- * Kata naik dari balik mask sambil menajam dari blur. Blur hanya
- * dijalankan di desktop: efeknya mahal untuk GPU ponsel dan nyaris tidak
- * terlihat pada ukuran teks kecil.
- */
 export function createWordReveal(root: Element, config: TextRevealConfig = {}): void {
   const {
     selector = '[data-word]',
@@ -65,9 +51,11 @@ export function createWordReveal(root: Element, config: TextRevealConfig = {}): 
     mm.add(MEDIA.desktop, () => {
       gsap.from(words, { ...base, filter: 'blur(12px)', opacity: 0 })
     })
+
     mm.add(MEDIA.belowDesktop, () => {
       gsap.from(words, base)
     })
+    
     return
   }
 

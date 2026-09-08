@@ -62,10 +62,6 @@ export function OceanStats() {
           ))}
         </div>
 
-        {/*
-          Honesty note: these are markers, not measurements. Kept visible
-          so the page never implies figures the group has not published.
-        */}
         <p className="mt-16 max-w-2xl border-l border-white/12 pl-5 font-body text-xs leading-relaxed text-offwhite/40">
           Angka pada bagian ini adalah penanda urutan, bukan data statistik. Data resmi akan
           ditampilkan di sini setelah tersedia dan terverifikasi.

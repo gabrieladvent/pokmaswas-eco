@@ -1,18 +1,5 @@
 import { MEDIA, gsap } from '@/lib/gsap'
 
-/**
- * Reveal untuk naskah panjang.
- *
- * Dianimasikan **per blok paragraf**, bukan per kata atau per huruf.
- * Memecah paragraf panjang menjadi puluhan elemen bergerak membuat teks
- * sulit diikuti — persis kebalikan dari yang kita inginkan pada bagian
- * yang memang untuk dibaca.
- *
- * Reveal-nya dipicu sekali dan berjalan cepat, bukan ter-scrub. Opasitas
- * yang ter-scrub berarti teks setengah transparan selama pembaca masih
- * membacanya; scrub disimpan untuk gambar dan indikator progres, yang
- * memang tidak dibaca.
- */
 export function createChapterReveal(root: Element): void {
   const blocks = root.querySelectorAll<HTMLElement>('[data-chapter-block]')
   if (blocks.length === 0) return
@@ -29,8 +16,6 @@ export function createChapterReveal(root: Element): void {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: block,
-          // Cukup jauh di bawah lipatan agar paragraf sudah selesai muncul
-          // saat mata pembaca sampai ke sana.
           start: 'top 88%',
           toggleActions: 'play none none none',
         },
@@ -42,7 +27,6 @@ export function createChapterReveal(root: Element): void {
   mm.add(MEDIA.belowDesktop, build(false))
 }
 
-/** Kepala bab: nomor, garis, lalu judulnya. */
 export function createChapterHeadingReveal(root: Element): void {
   const headings = root.querySelectorAll<HTMLElement>('[data-chapter-heading]')
 
@@ -70,14 +54,6 @@ export function createChapterHeadingReveal(root: Element): void {
   }
 }
 
-/**
- * Reveal gambar bercerita: tirai membuka dari bawah sementara gambar di
- * dalamnya mengendap dari over-scale.
- *
- * Clip ada di bingkai, skala di gambar, dan parallax di lapis di antara
- * keduanya — memisahkan ketiganya membuat mereka bisa berjalan bersamaan
- * tanpa saling menimpa matriks transform.
- */
 export function createStoryImageReveal(root: Element, selector = '[data-parallax]'): void {
   const frames = Array.from(root.querySelectorAll<HTMLElement>(selector)).filter(
     (frame) => frame.getClientRects().length > 0,

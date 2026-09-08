@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils'
 
 export interface EyebrowProps {
   readonly children: ReactNode
-  /** Warna diatur di sini; garisnya mewarisi lewat `currentColor`. */
   readonly className?: string
 }
 
@@ -41,19 +40,11 @@ const SIZES: Record<HeadingSize, string> = {
 }
 
 export interface SplitHeadingProps {
-  /** Satu entri per baris visual. */
   readonly lines: readonly string[]
   readonly level?: 'h1' | 'h2' | 'h3'
   readonly size?: HeadingSize
   readonly className?: string
   readonly id?: string
-  /**
-   * `line` mengangkat seluruh baris sekaligus; `word` memecahnya per kata
-   * sehingga bisa di-stagger dan ditajamkan dari blur.
-   *
-   * Setiap potongan punya mask sendiri (`overflow-hidden`) — itulah yang
-   * mengubah translate biasa menjadi "muncul dari bawah".
-   */
   readonly reveal?: RevealMode
 }
 
@@ -71,8 +62,6 @@ export function SplitHeading({
         reveal === 'word' ? (
           <span key={line} className="block">
             {line.split(' ').map((word, index) => (
-              // Padding bawah memberi ruang untuk descender; margin negatif
-              // mengembalikan tinggi baris agar rapat seperti semula.
               <span
                 key={`${word}-${index}`}
                 className="-mb-[0.14em] inline-block overflow-hidden pb-[0.14em] align-bottom"

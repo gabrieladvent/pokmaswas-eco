@@ -9,7 +9,6 @@ import { addressLines, site } from '@/data/site'
 export interface MobileMenuProps {
   readonly open: boolean
   readonly onClose: () => void
-  /** Focus returns here when the menu closes. */
   readonly triggerRef: React.RefObject<HTMLButtonElement | null>
 }
 
@@ -18,7 +17,6 @@ export function MobileMenu({ open, onClose, triggerRef }: MobileMenuProps) {
   const goToSection = useSectionNavigation()
   const firstLinkRef = useRef<HTMLAnchorElement>(null)
 
-  /* Escape closes; focus is trapped loosely inside the panel. */
   useEffect(() => {
     if (!open) return
 
@@ -51,7 +49,6 @@ export function MobileMenu({ open, onClose, triggerRef }: MobileMenuProps) {
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [open, onClose])
 
-  /* Scroll lock + focus handoff. */
   useEffect(() => {
     if (open) {
       lockScroll()
@@ -61,7 +58,6 @@ export function MobileMenu({ open, onClose, triggerRef }: MobileMenuProps) {
     return undefined
   }, [open])
 
-  /* Panel + link choreography. */
   useEffect(() => {
     const panel = panelRef.current
     if (!panel || !open || prefersReducedMotion()) return
@@ -80,7 +76,6 @@ export function MobileMenu({ open, onClose, triggerRef }: MobileMenuProps) {
   const handleNavigate = (href: string): void => {
     onClose()
     triggerRef.current?.focus({ preventScroll: true })
-    // Let the overlay unmount before scrolling, so the lock is released first.
     window.requestAnimationFrame(() => goToSection(href))
   }
 

@@ -10,7 +10,6 @@ export interface SectionProps {
   readonly tone?: SectionTone
   readonly className?: string
   readonly ref?: Ref<HTMLElement>
-  /** Removes the default vertical rhythm for full-bleed sections. */
   readonly flush?: boolean
   readonly ariaLabel?: string
 }

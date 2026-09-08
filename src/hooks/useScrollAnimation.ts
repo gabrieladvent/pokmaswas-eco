@@ -36,8 +36,5 @@ export function useScrollAnimation<T extends HTMLElement>(
 
     const ctx = gsap.context(() => factory(root), root)
     return () => ctx.revert()
-    // The factory is intentionally excluded: callers pass inline closures,
-    // and `deps` is the explicit contract for when to rebuild.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }

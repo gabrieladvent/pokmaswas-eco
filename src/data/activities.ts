@@ -1,29 +1,6 @@
 import { photo } from '@/lib/utils'
 import type { Activity, ActivityCategory } from '@/types'
 
-/**
- * ⚠️ CATATAN UNTUK PENGELOLA — DATA CONTOH, BUKAN CATATAN RESMI.
- *
- * Tanggal, judul, naskah bab, dan lokasi di bawah ini adalah **contoh
- * struktur** agar field journal dapat ditampilkan dan diuji. Semuanya
- * harus diganti dengan dokumentasi kegiatan Pokmaswas San Dominggo yang
- * sebenarnya sebelum website dipublikasikan.
- *
- * Cara kerja panjang naskah:
- *
- * - `excerpt` selalu tampil (timeline, kartu terkait).
- * - `chapters` kosong atau satu bab → dianggap cerita pendek; tidak ada
- *   tautan "Baca Cerita Lengkap".
- * - Dua bab atau lebih → kegiatan punya halaman `/kegiatan/:slug`.
- * - Bab tidak dipaksakan. Isi seadanya yang memang ada.
- *
- * Foto masih memakai stok Unsplash lewat helper `photo()`. Untuk memakai
- * foto lapangan sendiri, letakkan berkas di `src/assets/images/` lalu ubah
- * nilai `coverImage`, `chapters[].image`, dan `gallery[].src` di berkas ini
- * saja — komponen tidak perlu disentuh.
- *
- * Urutkan dari yang terbaru ke terlama; timeline mengikuti urutan array.
- */
 export const activities: readonly Activity[] = [
   {
     id: '01',
@@ -321,13 +298,10 @@ export const activities: readonly Activity[] = [
   },
 ]
 
-/** Kegiatan yang tampil sebagai cerita utama di beranda. */
 export const featuredActivity: Activity | undefined = activities.find((item) => item.featured)
 
-/** Sisanya, ditampilkan sebagai timeline. */
 export const timelineActivities: readonly Activity[] = activities.filter((item) => !item.featured)
 
-/** Dua bab atau lebih berarti kegiatan ini punya halaman ceritanya sendiri. */
 export function hasFullStory(activity: Activity): boolean {
   return activity.chapters.length >= 2
 }
@@ -337,7 +311,6 @@ export function findActivityBySlug(slug: string | undefined): Activity | undefin
   return activities.find((activity) => activity.slug === slug)
 }
 
-/** Kegiatan lain untuk ditawarkan di akhir sebuah cerita. */
 export function relatedActivities(activity: Activity, limit = 3): readonly Activity[] {
   const sameCategory = activities.filter(
     (item) => item.slug !== activity.slug && item.category === activity.category,
@@ -352,7 +325,6 @@ export const ACTIVITY_FILTER_ALL = 'Semua' as const
 
 export type ActivityFilterValue = typeof ACTIVITY_FILTER_ALL | ActivityCategory
 
-/** Urutan filter dijaga tetap; hanya kategori yang benar-benar dipakai. */
 export const activityFilters: readonly ActivityFilterValue[] = [
   ACTIVITY_FILTER_ALL,
   ...(['Pengawasan', 'Monitoring', 'Edukasi', 'Konservasi', 'Masyarakat'] as const).filter(

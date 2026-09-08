@@ -18,23 +18,8 @@ import { ActivityLightbox } from './ActivityLightbox'
 import { ActivityStory } from './ActivityStory'
 import { ActivityTimeline } from './ActivityTimeline'
 
-/** Berapa bab yang ditampilkan di beranda sebelum pembaca ditawari
- *  halaman ceritanya sendiri. Cukup untuk terasa seperti cerita, tidak
- *  cukup untuk membuat beranda jadi sepanjang artikel. */
 const CHAPTERS_ON_LANDING = 3
 
-/**
- * Field journal Pokmaswas.
- *
- * Naskah panjang ditangani berlapis, bukan dipotong:
- *
- *   1. beranda — ringkasan dan beberapa bab pertama sebagai cerita sticky
- *   2. tautan  — "Baca Cerita Lengkap"
- *   3. halaman — `/kegiatan/:slug` dengan naskah utuh
- *
- * Dengan begitu bagian ini tetap terasa seperti dokumenter tanpa membuat
- * beranda memanjang mengikuti panjang tulisan.
- */
 export function ActivitiesSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
@@ -48,8 +33,6 @@ export function ActivitiesSection() {
     createWordReveal(root)
   })
 
-  // Dibangun ulang saat filter berubah: DOM-nya berganti, jadi seluruh
-  // ScrollTrigger perlu diukur ulang.
   useScrollAnimation(
     timelineRef,
     (root) => {
@@ -86,8 +69,6 @@ export function ActivitiesSection() {
 
   const handleClose = useCallback(() => setOpenSlug(null), [])
 
-  // Tanpa `overflow-hidden` di sini: panggung gambar cerita memakai
-  // `position: sticky`, yang mati begitu salah satu induknya meng-clip.
   return (
     <Section id="kegiatan" tone="light" ref={sectionRef}>
       <Container width="wide">

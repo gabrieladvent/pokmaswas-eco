@@ -8,12 +8,6 @@ export interface ActivityFilterProps {
   readonly counts: Readonly<Record<string, number>>
 }
 
-/**
- * Filter kategori.
- *
- * Dibuat sebagai baris teks bergaris bawah, bukan tombol berkotak, agar
- * tetap terbaca editorial dan tidak berubah menjadi UI dasbor.
- */
 export function ActivityFilter({ value, onChange, counts }: ActivityFilterProps) {
   return (
     <div
@@ -43,7 +37,6 @@ export function ActivityFilter({ value, onChange, counts }: ActivityFilterProps)
             >
               {count}
             </span>
-            {/* Garis bawah tumbuh dari kiri — satu transform, tanpa layout. */}
             <span
               aria-hidden="true"
               className={cn(

@@ -51,8 +51,6 @@ export function AboutSection() {
             </div>
           </div>
 
-          {/* Gambar — tiga kedalaman: bingkai utama, detail yang tumpang
-              tindih, dan keterangan yang mengikuti paling lambat. */}
           <div className="relative">
             <RevealImage
               src={photo(ABOUT_PHOTO, 1400)}
@@ -62,7 +60,6 @@ export function AboutSection() {
               className="aspect-4/5 rounded-sm sm:aspect-3/4 lg:aspect-4/5"
             />
 
-            {/* Detail yang menimpa — memecah persegi 50/50 yang terlalu rapi. */}
             <div
               data-about-detail
               className="absolute -bottom-10 -left-6 hidden w-44 overflow-hidden rounded-sm shadow-2xl shadow-deep/25 sm:block lg:-left-12 lg:w-56"

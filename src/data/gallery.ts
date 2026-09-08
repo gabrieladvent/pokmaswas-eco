@@ -1,15 +1,6 @@
 import { photo } from '@/lib/utils'
 import type { GalleryImage } from '@/types'
 
-/**
- * TODO: replace with the group's own documentation photographs.
- *
- * Order matters. The spans below are sequenced so the editorial grid
- * packs without holes at both breakpoints — four columns on desktop
- * (4 × 4 cells) and two on mobile — so keep the pattern
- * `large, regular, regular, wide, tall, tall, wide, wide` when swapping
- * images in and out.
- */
 export const galleryImages: readonly GalleryImage[] = [
   {
     id: 'garis-pantai',

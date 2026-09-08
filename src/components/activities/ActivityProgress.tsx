@@ -6,14 +6,6 @@ export interface ActivityProgressProps {
   readonly className?: string
 }
 
-/**
- * Penanda posisi di dalam cerita: `01 / 05` beserta nama babnya.
- *
- * Seluruh label dirender bertumpuk sejak awal dan hanya yang aktif yang
- * ditampilkan, digerakkan atribut `data-active` dari `createActivityStory`.
- * Dengan begitu tidak ada teks yang perlu ditulis ulang saat menggulir —
- * jadi tidak ada state React, dan tidak ada render ulang.
- */
 export function ActivityProgress({ chapters, className }: ActivityProgressProps) {
   const total = String(chapters.length).padStart(2, '0')
 
@@ -24,7 +16,6 @@ export function ActivityProgress({ chapters, className }: ActivityProgressProps)
       className={cn('flex flex-col gap-4', className)}
     >
       <div className="flex items-baseline gap-2 font-body text-xs tracking-[0.2em] text-deep/45 tabular-nums">
-        {/* Tumpukan angka: hanya bab aktif yang terlihat. */}
         <span className="relative inline-block w-[2ch] text-deep">
           {chapters.map((chapter, index) => (
             <span
@@ -37,13 +28,11 @@ export function ActivityProgress({ chapters, className }: ActivityProgressProps)
               {String(index + 1).padStart(2, '0')}
             </span>
           ))}
-          {/* Menjaga lebar kotaknya tetap saat semua label absolut. */}
           <span className="invisible">00</span>
         </span>
         <span>/ {total}</span>
       </div>
 
-      {/* Tumpukan nama bab. */}
       <span className="relative block h-5">
         {chapters.map((chapter, index) => (
           <span
@@ -58,12 +47,10 @@ export function ActivityProgress({ chapters, className }: ActivityProgressProps)
         ))}
       </span>
 
-      {/* Rel progres tipis, mengikuti posisi scroll di dalam cerita. */}
       <span aria-hidden="true" className="mt-1 block h-px w-full bg-deep/12">
         <span data-progress-bar className="block h-full w-full origin-left bg-turquoise" />
       </span>
 
-      {/* Rel titik: satu titik per bab. */}
       <span className="flex items-center gap-2 pt-1">
         {chapters.map((chapter, index) => (
           <span key={chapter.id} className="flex items-center gap-2">

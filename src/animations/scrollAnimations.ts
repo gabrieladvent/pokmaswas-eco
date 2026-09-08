@@ -13,10 +13,6 @@ export interface RevealConfig {
   readonly start?: string
 }
 
-/**
- * Fades and lifts elements as they enter. Used by `ScrollReveal` and as
- * the baseline for sections that need nothing more elaborate.
- */
 export function createRevealAnimation(root: Element, config: RevealConfig = {}): void {
   const { selector = '[data-reveal]', y = 34, stagger = 0.09, start = 'top 82%' } = config
   const targets = selector ? root.querySelectorAll(selector) : [root]
@@ -52,8 +48,6 @@ export function createAboutAnimation(root: HTMLElement): void {
     scrollTrigger: { trigger: q('[data-about-body]'), start: 'top 84%', once: true },
   })
 
-  // Detail yang menimpa datang setelah bingkai utama terbuka, sehingga
-  // terbaca sebagai lapisan kedua, bukan bagian dari gambar yang sama.
   gsap.from(q('[data-about-detail]'), {
     opacity: 0,
     y: 40,
@@ -70,8 +64,6 @@ export function createAboutAnimation(root: HTMLElement): void {
     scrollTrigger: { trigger: q('[data-about-caption]'), start: 'top 92%', once: true },
   })
 
-  // Lapis ketiga: detail bergerak sedikit berlawanan arah dari bingkai
-  // utama, yang membuat keduanya terbaca berada pada jarak berbeda.
   gsap.matchMedia().add(MEDIA.desktop, () => {
     gsap.fromTo(
       q('[data-about-detail]'),
@@ -89,13 +81,6 @@ export function createAboutAnimation(root: HTMLElement): void {
  * Roles — vertical scroll converted to horizontal movement
  * ------------------------------------------------------------------ */
 
-/**
- * Pins the section and translates the track sideways by exactly the
- * amount that overflows the viewport, so the last card lands flush.
- *
- * Desktop only. Below `lg` the component renders a plain vertical stack
- * (see `RolesSection`), which is both cheaper and easier to use on touch.
- */
 export function createRolesAnimation(root: HTMLElement): void {
   createRevealAnimation(root)
   createLineReveal(root)
@@ -117,9 +102,6 @@ export function createRolesAnimation(root: HTMLElement): void {
       scrollTrigger: {
         trigger: root,
         start: 'top top',
-        // Matching scroll distance to pixel distance keeps the sideways
-        // speed equal to the reader's scroll speed — that is what makes
-        // it feel natural rather than sticky.
         end: () => `+=${overflow()}`,
         pin: true,
         scrub: 1,
@@ -137,7 +119,6 @@ export function createRolesAnimation(root: HTMLElement): void {
       })
     }
 
-    // Cards drift in slightly as they approach the centre of the frame.
     for (const card of track.querySelectorAll<HTMLElement>('[data-role-card]')) {
       gsap.from(card.querySelector('[data-role-body]'), {
         opacity: 0,
@@ -162,11 +143,6 @@ export function createRolesAnimation(root: HTMLElement): void {
  * Ocean statistics
  * ------------------------------------------------------------------ */
 
-/**
- * Markers rise in sequence. Deliberately no counter animation: the values
- * in `data/stats.ts` are editorial markers, not measured figures. Add one
- * here only once real numbers exist.
- */
 export function createStatsAnimation(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 
@@ -196,10 +172,6 @@ export function createStatsAnimation(root: HTMLElement): void {
  * Community — the chain draws itself
  * ------------------------------------------------------------------ */
 
-/**
- * The connecting line is a real SVG path drawn with a dash offset tied to
- * scroll progress; nodes then pop in one by one as the line reaches them.
- */
 export function createCommunityAnimation(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 
@@ -209,14 +181,6 @@ export function createCommunityAnimation(root: HTMLElement): void {
 
   const path = root.querySelector<SVGPathElement>('[data-chain-path]')
   if (path) {
-    /*
-     * The path lives in a viewBox stretched non-uniformly, so
-     * `getTotalLength()` reports user units (100) while
-     * `vector-effect: non-scaling-stroke` makes the dash pattern resolve
-     * in screen pixels. The rendered height is therefore the only value
-     * that lines the two up — and it has to be re-read on refresh, since
-     * the chain's height changes with the viewport.
-     */
     const dashLength = (): number => path.getBoundingClientRect().height || path.getTotalLength()
 
     gsap.fromTo(
@@ -280,8 +244,6 @@ export function createGalleryAnimation(root: HTMLElement): void {
     },
   })
 
-  // Hanyutan pelan di dalam tiap bingkai: potongannya bergerak, ubinnya
-  // tidak — sehingga grid tetap rapi sementara isinya terasa hidup.
   gsap.matchMedia().add(MEDIA.desktop, () => {
     for (const item of items) {
       const image = item.querySelector<HTMLElement>('[data-gallery-image]')

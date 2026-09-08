@@ -4,17 +4,6 @@ import { navigation } from '@/data/navigation'
 import { ScrollTrigger, gsap } from '@/lib/gsap'
 import { scrollToSection } from '@/lib/scroll'
 
-/**
- * Indikator bagian di sisi kanan.
- *
- * Status aktif ditulis sebagai atribut `data-active` langsung ke DOM oleh
- * ScrollTrigger, bukan disimpan sebagai state React — menggulir seluruh
- * halaman berarti belasan pergantian, dan tidak satu pun perlu memicu
- * render ulang. Seluruh penekanan visualnya ditangani CSS.
- *
- * Hanya muncul dari `xl` ke atas: di layar yang lebih sempit ia akan
- * berebut ruang dengan konten, dan navbar sudah menyediakan hal yang sama.
- */
 export function ScrollProgress() {
   const ref = useRef<HTMLElement>(null)
 
@@ -42,7 +31,6 @@ export function ScrollProgress() {
         })
       })
 
-      // Rel progres keseluruhan halaman.
       const rail = root.querySelector<HTMLElement>('[data-progress-rail]')
       if (rail) {
         gsap.fromTo(
@@ -65,16 +53,7 @@ export function ScrollProgress() {
     <nav
       ref={ref}
       aria-label="Lompat ke bagian"
-      /*
-       * Dua batasan yang keduanya penting:
-       *
-       * - `mix-blend-difference` membuat indikator membalik warna terhadap
-       *   apa pun di belakangnya, jadi ia tetap terbaca baik di atas pasir
-       *   terang maupun laut dalam tanpa perlu tahu nada section.
-       * - Ambang 1760px adalah titik di mana container `wide` (100rem)
-       *   berhenti melebar dan menyisakan gutter sungguhan. Di bawah itu
-       *   indikator akan menimpa teks, jadi ia tidak ditampilkan.
-       */
+
       className="pointer-events-none fixed top-1/2 right-8 z-40 hidden -translate-y-1/2 mix-blend-difference min-[1760px]:block"
     >
       <div className="relative flex items-stretch gap-4">
@@ -92,8 +71,6 @@ export function ScrollProgress() {
                 onClick={() => scrollToSection(item.href)}
                 className="flex items-center justify-end gap-3 text-right"
               >
-                {/* Label hanya hadir saat aktif atau di-hover, supaya
-                    indikator tetap kecil dan tidak mengganggu. */}
                 <span
                   className="font-body text-[0.6875rem] tracking-[0.22em] text-white/80 uppercase opacity-0 transition-opacity duration-400 group-hover:opacity-100 group-data-[active=true]:opacity-100"
                 >
@@ -114,7 +91,6 @@ export function ScrollProgress() {
           ))}
         </ul>
 
-        {/* Rel progres keseluruhan. */}
         <div aria-hidden="true" className="relative w-px bg-white/20">
           <span data-progress-rail className="absolute inset-0 block origin-top bg-white" />
         </div>

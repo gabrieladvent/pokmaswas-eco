@@ -44,9 +44,6 @@ export function Hero() {
           {HEADLINE_LINES.map((line) => (
             <span key={line} className="block">
               {line.split(' ').map((word, index) => (
-                // Setiap kata punya mask sendiri agar bisa naik dengan
-                // jeda — inilah yang membuatnya terbaca editorial, bukan
-                // seperti mesin tik.
                 <span
                   key={`${word}-${index}`}
                   className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-bottom"

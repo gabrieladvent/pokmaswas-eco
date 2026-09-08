@@ -9,17 +9,11 @@ export interface ScrollRevealProps {
   readonly children: ReactNode
   readonly className?: string
   readonly as?: ElementType
-  /** Which descendants to reveal. Defaults to direct children. */
   readonly selector?: string
   readonly y?: number
   readonly stagger?: number
 }
 
-/**
- * Drop-in reveal for content that needs nothing beyond "appear as it
- * enters". Sections with choreography of their own call the animation
- * modules directly instead.
- */
 export function ScrollReveal({
   children,
   className,

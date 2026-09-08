@@ -21,16 +21,6 @@ import { findActivityBySlug, relatedActivities } from '@/data/activities'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { cn, formatActivityDate } from '@/lib/utils'
 
-/**
- * Halaman cerita sebuah kegiatan — `/kegiatan/:slug`.
- *
- * Di sini naskahnya utuh. Bab disusun berselang-seling antara teks dan
- * foto sehingga mata punya tempat beristirahat di antara paragraf, dan
- * setiap foto bergerak parallax terhadap naskah di sebelahnya.
- *
- * Bahasa visualnya sama persis dengan beranda: nada pasir dan laut yang
- * sama, tipografi yang sama, jenis gerakan yang sama.
- */
 export default function ActivityDetail() {
   const { slug } = useParams<{ slug: string }>()
   const activity = findActivityBySlug(slug)

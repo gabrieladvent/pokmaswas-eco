@@ -3,7 +3,6 @@ import { Maximize2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { GalleryImage, GallerySpan } from '@/types'
 
-/** Footprint inside the editorial grid. */
 const SPANS: Record<GallerySpan, string> = {
   large: 'col-span-2 row-span-2',
   wide: 'col-span-2 row-span-1',
@@ -30,7 +29,6 @@ export function GalleryItem({ image, index, onOpen }: GalleryItemProps) {
         SPANS[image.span],
       )}
     >
-      {/* Oversized so the scrub inside the frame never reveals an edge. */}
       <div data-gallery-image className="absolute inset-[-8%]">
         <img
           src={image.src}
@@ -60,7 +58,6 @@ export function GalleryItem({ image, index, onOpen }: GalleryItemProps) {
         </p>
       </div>
 
-      {/* Keeps the tile a real box even before images decode. */}
       <span aria-hidden="true" className="block h-full w-full" />
     </button>
   )

@@ -2,10 +2,6 @@ import { useCallback, useSyncExternalStore } from 'react'
 
 import { MEDIA, REDUCED_MOTION_QUERY } from '@/lib/gsap'
 
-/**
- * Subscribes to a media query without the extra render that the
- * `useState` + `useEffect` pattern causes on mount.
- */
 export function useMediaQuery(query: string): boolean {
   const subscribe = useCallback(
     (onChange: () => void) => {
@@ -18,7 +14,6 @@ export function useMediaQuery(query: string): boolean {
 
   const getSnapshot = useCallback(() => window.matchMedia(query).matches, [query])
 
-  // No SSR in this app, but keeping the server snapshot honest costs nothing.
   return useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
 

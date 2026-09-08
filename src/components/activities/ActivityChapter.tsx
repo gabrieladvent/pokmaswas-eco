@@ -4,23 +4,9 @@ import type { ActivityChapter as Chapter } from '@/types'
 export interface ActivityChapterProps {
   readonly chapter: Chapter
   readonly index: number
-  /**
-   * Halaman cerita menempatkan fotonya sendiri di samping naskah, jadi
-   * foto bawaan di sini dimatikan agar tidak muncul dua kali saat kolom
-   * grid-nya menumpuk di layar sempit.
-   */
   readonly showInlinePhoto?: boolean
 }
 
-/**
- * Satu bab cerita.
- *
- * Paragraf dibungkus `data-chapter-block` supaya reveal berjalan per blok,
- * bukan per kata — bagian ini memang untuk dibaca.
- *
- * Fotonya ikut tampil di sini hanya di bawah `lg`, tempat panggung gambar
- * sticky tidak dipakai. Lihat `ActivityStory`.
- */
 export function ActivityChapter({
   chapter,
   index,
@@ -49,8 +35,6 @@ export function ActivityChapter({
         </h4>
       </header>
 
-      {/* Lebar baca dibatasi; panjangnya naskah tidak boleh membuat mata
-          harus melompat jauh saat berpindah baris. */}
       <div className="max-w-[62ch] space-y-6">
         {chapter.content.map((paragraph) => (
           <p

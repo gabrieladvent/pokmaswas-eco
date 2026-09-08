@@ -9,17 +9,6 @@ import { OceanStats } from '@/components/ocean/OceanStats'
 import { OceanTransition } from '@/components/ocean/OceanTransition'
 import { RolesSection } from '@/components/roles/RolesSection'
 
-/**
- * Perjalanannya, berurutan:
- *
- *   hero sinematik → daratan → pesisir → laut → bawah laut →
- *   cerita Pokmaswas → kegiatan lapangan → masyarakat →
- *   konservasi → masa depan
- *
- * Nada tiap section menuruni gradasi dari pasir ke laut dalam, naik
- * sebentar ke cahaya siang untuk kerja lapangan, lalu turun lagi menuju
- * penutup — palet warnanya sendiri yang membawa alurnya.
- */
 export function HomePage() {
   return (
     <>
