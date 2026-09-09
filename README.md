@@ -110,8 +110,8 @@ Layanan ini tidak memerlukan kunci API sama sekali, jadi tidak ada rahasia
 apa pun yang perlu diletakkan di bundel frontend.
 
 ```
-VITE_VISITOR_COUNTER_URL         basis URL layanan   (opsional)
-VITE_VISITOR_COUNTER_NAMESPACE   ruang nama penghitung (opsional)
+VISITOR_COUNTER_URL         basis URL layanan   (opsional)
+VISITOR_COUNTER_NAMESPACE   ruang nama penghitung (opsional)
 ```
 
 Keduanya punya nilai bawaan yang sudah berfungsi — lihat `.env.example`.
@@ -150,8 +150,8 @@ komponen React ikut berubah:
 
 ```ts
 interface CounterBackend {
-  hit(key: string): Promise<number>   // naikkan, kembalikan nilai baru
-  read(key: string): Promise<number>  // baca tanpa menaikkan
+  hit(key: string): Promise<number>; // naikkan, kembalikan nilai baru
+  read(key: string): Promise<number>; // baca tanpa menaikkan
 }
 ```
 
@@ -179,13 +179,13 @@ sekaligus memangkas durasinya.
 
 Durasi terukur di peramban:
 
-| Keadaan | Sampai Hero terlihat |
-| --- | --- |
-| Normal | ±3,5 dtk |
-| Penghitung mati | ±2,8 dtk |
-| Penghitung menggantung 8 dtk | ±3,9 dtk |
-| `prefers-reduced-motion` | ±2,2 dtk |
-| Tombol "Lewati" ditekan | ±0,8 dtk |
+| Keadaan                      | Sampai Hero terlihat |
+| ---------------------------- | -------------------- |
+| Normal                       | ±3,5 dtk             |
+| Penghitung mati              | ±2,8 dtk             |
+| Penghitung menggantung 8 dtk | ±3,9 dtk             |
+| `prefers-reduced-motion`     | ±2,2 dtk             |
+| Tombol "Lewati" ditekan      | ±0,8 dtk             |
 
 Ambangnya ada di `components/visitor/VisitorWelcome.tsx` (`MIN_INTRO_MS`,
 `MAX_WAIT_MS`); panjang tiap babak ada di `animations/visitor/`.
