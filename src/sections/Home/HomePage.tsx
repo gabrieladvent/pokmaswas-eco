@@ -8,6 +8,7 @@ import { FinalTransition } from '@/components/ocean/FinalTransition'
 import { OceanStats } from '@/components/ocean/OceanStats'
 import { OceanTransition } from '@/components/ocean/OceanTransition'
 import { RolesSection } from '@/components/roles/RolesSection'
+import { VisitorStats } from '@/components/visitor/VisitorStats'
 
 export function HomePage() {
   return (
@@ -20,6 +21,7 @@ export function HomePage() {
       <GallerySection />
       <ActivitiesSection />
       <CommunitySection />
+      <VisitorStats />
       <FinalTransition />
       <CTASection />
     </>

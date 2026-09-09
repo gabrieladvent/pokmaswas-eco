@@ -25,6 +25,7 @@ npm run preview
 
 ```
 src/
+├── services/     # visitorCounter — satu-satunya tempat yang tahu soal jaringan
 ├── animations/   # semua logika GSAP, terpisah dari komponen
 │   ├── heroAnimations.ts      # intro + enam tahap scroll pass
 │   ├── textAnimations.ts      # reveal per baris / per kata (blur → tajam)
@@ -36,6 +37,7 @@ src/
 │   │   ├── activityReveal.ts          # reveal per blok paragraf
 │   │   ├── activityImageTransition.ts # crossfade / clip antar-bab
 │   │   └── activityParallax.ts
+│   ├── visitor/               # pembuka, hitung naik, tirai air
 │   └── transitions.ts         # turun ke laut, lalu naik ke permukaan
 ├── components/   # UI per bagian (common, layout, hero, activities, …)
 ├── data/         # seluruh konten: navigation, roles, activities, gallery, …
@@ -49,9 +51,9 @@ src/
 ## Alur halaman
 
 ```
-hero sinematik → daratan → pesisir → laut → bawah laut →
-peran Pokmaswas → galeri → kegiatan lapangan → masyarakat →
-konservasi → masa depan
+layar pembuka (nomor pengunjung) → hero sinematik → daratan → pesisir →
+laut → bawah laut → peran Pokmaswas → galeri → kegiatan lapangan →
+masyarakat → jejak pengunjung → konservasi → masa depan
 ```
 
 Nada warna tiap section yang membawa alurnya: menurun dari pasir ke laut
@@ -99,6 +101,95 @@ Jumlah bab di beranda diatur lewat `CHAPTERS_ON_LANDING` di
 Bab tidak dipaksakan: kegiatan dengan kurang dari dua bab hanya menampilkan
 ringkasan dan tidak ditautkan ke halaman cerita.
 
+## Penghitung pengunjung
+
+Tanpa basis data. Angkanya disimpan di **Abacus**
+(https://abacus.jasoncameron.dev), layanan penghitung publik yang hanya bisa
+melakukan dua hal: menaikkan satu bilangan secara atomik, dan membacanya.
+Layanan ini tidak memerlukan kunci API sama sekali, jadi tidak ada rahasia
+apa pun yang perlu diletakkan di bundel frontend.
+
+```
+VITE_VISITOR_COUNTER_URL         basis URL layanan   (opsional)
+VITE_VISITOR_COUNTER_NAMESPACE   ruang nama penghitung (opsional)
+```
+
+Keduanya punya nilai bawaan yang sudah berfungsi — lihat `.env.example`.
+Ganti `NAMESPACE` untuk memulai hitungan dari nol.
+
+### Kunci yang dipakai
+
+```
+total              jumlah kunjungan sejak penghitung dipasang, tanpa kedaluwarsa
+day-YYYY-MM-DD     satu ember per hari (UTC)
+```
+
+Statistik mingguan adalah **7 hari terakhir yang bergulir**, dijumlahkan dari
+tujuh ember harian terakhir. Tidak ada data per individu yang disimpan — hanya
+bilangan.
+
+Ember untuk hari yang belum pernah ada kunjungan menghasilkan 404 dan
+diperlakukan sebagai nol. Wajar terlihat di konsol peramban selama minggu
+pertama, dan hilang sendiri setelah situs punya lalu lintas tujuh hari penuh.
+
+### Apa yang dihitung sebagai satu kunjungan
+
+Satu kunjungan per perangkat per **12 jam** (`VISIT_WINDOW_MS` di
+`lib/visitorSession.ts`). Menyegarkan halaman atau kembali dalam jendela itu
+tidak menaikkan penghitung: nomor yang tersimpan dipakai kembali.
+
+`localStorage` hanya menyimpan hal lokal — pengenal sesi anonim, waktu
+kunjungan terakhir, dan nomor pengunjung yang sudah didapat. Angka global
+tidak pernah berasal dari sana.
+
+### Menukar backend
+
+Semua yang tahu soal jaringan ada di `services/visitorCounter.ts`. Backend
+apa pun yang bisa memenuhi antarmuka ini dapat menggantikannya tanpa satu pun
+komponen React ikut berubah:
+
+```ts
+interface CounterBackend {
+  hit(key: string): Promise<number>   // naikkan, kembalikan nilai baru
+  read(key: string): Promise<number>  // baca tanpa menaikkan
+}
+```
+
+Ganti isi `createBackend()` — misalnya ke endpoint serverless sendiri bila
+kelak dibutuhkan kunci rahasia — dan selesai.
+
+### Kalau layanannya mati
+
+Situs tetap berjalan penuh. Permintaan dibatasi 4 detik, layar pembuka
+berhenti menunggu setelah 1,6 detik, dan bagian "Jejak Kita" menampilkan
+tanda "—" alih-alih angka. Tidak ada pesan galat teknis yang muncul ke
+pengunjung.
+
+### Layar pembuka
+
+Tampil **sekali per sesi tab**; menyegarkan halaman melewatinya. Selalu bisa
+dilewati lewat tombol "Lewati" atau tombol Escape, dan fokus keyboard mendarat
+di sana saat lapisan itu muncul. Saat `prefers-reduced-motion` aktif,
+urutannya tetap ada tetapi tanpa gerakan sama sekali.
+
+Babaknya sengaja **bertumpuk**, bukan berurutan: nama kelompok meredup dan
+sedikit mengecil sementara sapaan naik ke tempatnya, dan tirai mulai surut
+sebelum isinya habis memudar. Itulah yang membuatnya terasa satu gerakan
+sekaligus memangkas durasinya.
+
+Durasi terukur di peramban:
+
+| Keadaan | Sampai Hero terlihat |
+| --- | --- |
+| Normal | ±3,5 dtk |
+| Penghitung mati | ±2,8 dtk |
+| Penghitung menggantung 8 dtk | ±3,9 dtk |
+| `prefers-reduced-motion` | ±2,2 dtk |
+| Tombol "Lewati" ditekan | ±0,8 dtk |
+
+Ambangnya ada di `components/visitor/VisitorWelcome.tsx` (`MIN_INTRO_MS`,
+`MAX_WAIT_MS`); panjang tiap babak ada di `animations/visitor/`.
+
 ## Konten yang masih placeholder
 
 Bagian berikut sengaja **tidak** diisi angka atau tanggal karangan. Ganti
@@ -115,6 +206,8 @@ dengan data resmi organisasi sebelum publikasi:
   bagian atas.
 - `data/navigation.ts` — akun media sosial dirender sebagai teks "SEGERA",
   bukan tautan kosong.
+- Angka pengunjung **bukan** placeholder — ia benar-benar berasal dari
+  layanan penghitung, dan mulai dari nol pada ruang nama yang baru.
 - Seluruh foto masih diambil dari Unsplash lewat helper `photo()` di
   `lib/utils.ts`. Untuk memakai foto dokumentasi sendiri, letakkan berkas di
   `src/assets/images/` dan ubah nilai `src` di `src/data/`.

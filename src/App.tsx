@@ -1,14 +1,17 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 
 import { Cursor } from '@/components/common/Cursor'
+import { VisitorWelcome } from '@/components/visitor/VisitorWelcome'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { ScrollProgress } from '@/components/layout/ScrollProgress'
 import { useLenis } from '@/hooks/useLenis'
 import { ScrollTrigger } from '@/lib/gsap'
 import { getLenis } from '@/lib/scroll'
+import { shouldShowWelcome } from '@/lib/visitorSession'
+import { registerVisit } from '@/services/visitorCounter'
 import ActivityDetail from '@/pages/ActivityDetail'
 import Home from '@/pages/Home'
 import NotFound from '@/pages/NotFound'
@@ -23,8 +26,21 @@ export default function App() {
 
 function AppShell() {
   const { pathname, hash } = useLocation()
+  // Dinilai sekali saat dipasang: layar sambutan tampil sekali per sesi tab.
+  const [welcomeVisible, setWelcomeVisible] = useState(shouldShowWelcome)
 
   useLenis()
+
+  /*
+   * Kunjungan dicatat sekalipun layar sambutan dilewati — misalnya saat
+   * halaman disegarkan. Fungsinya dimemoisasi di dalam service, jadi
+   * memanggilnya di sini tidak pernah menghasilkan hitungan ganda.
+   */
+  useEffect(() => {
+    void registerVisit()
+  }, [])
+
+  const handleWelcomeFinish = useCallback(() => setWelcomeVisible(false), [])
 
   /*
    * Berpindah halaman berarti seluruh isi `main` berganti, sehingga setiap
@@ -72,6 +88,8 @@ function AppShell() {
 
       <Footer />
       <Cursor />
+
+      {welcomeVisible ? <VisitorWelcome onFinish={handleWelcomeFinish} /> : null}
     </>
   )
 }
