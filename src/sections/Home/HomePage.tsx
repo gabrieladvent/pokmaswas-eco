@@ -1,5 +1,6 @@
 import { AboutSection } from '@/components/about/AboutSection'
 import { ActivitiesSection } from '@/components/activities/ActivitiesSection'
+import { CollaborationSection } from '@/components/collaboration/CollaborationSection'
 import { CommunitySection } from '@/components/community/CommunitySection'
 import { CTASection } from '@/components/cta/CTASection'
 import { GallerySection } from '@/components/gallery/GallerySection'
@@ -22,6 +23,7 @@ export function HomePage() {
       <ActivitiesSection />
       <CommunitySection />
       <VisitorStats />
+      <CollaborationSection />
       <FinalTransition />
       <CTASection />
     </>

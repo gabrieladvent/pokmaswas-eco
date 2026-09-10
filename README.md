@@ -53,7 +53,7 @@ src/
 ```
 layar pembuka (nomor pengunjung) → hero sinematik → daratan → pesisir →
 laut → bawah laut → peran Pokmaswas → galeri → kegiatan lapangan →
-masyarakat → jejak pengunjung → konservasi → masa depan
+masyarakat → jejak pengunjung → kolaborasi → konservasi → masa depan
 ```
 
 Nada warna tiap section yang membawa alurnya: menurun dari pasir ke laut
@@ -190,6 +190,31 @@ Durasi terukur di peramban:
 Ambangnya ada di `components/visitor/VisitorWelcome.tsx` (`MIN_INTRO_MS`,
 `MAX_WAIT_MS`); panjang tiap babak ada di `animations/visitor/`.
 
+## Bagian kolaborasi
+
+`RACATECH × POKMASWAS` — pernyataan kerja sama, bukan penempatan sponsor.
+
+Beberapa keputusan yang menjaganya tetap begitu:
+
+- **Kedua nama diperlakukan identik.** Ukuran, bobot, warna, dan jarak
+  dirender dari kelas yang sama persis, dan urutannya di
+  `data/collaboration.ts` tidak menyiratkan hierarki. Tidak ada "didukung
+  oleh", tidak ada panel logo.
+- **Tidak ada logo tiruan.** Proyek ini belum punya logo resmi, jadi kedua
+  nama dirender sebagai tipografi. Untuk memakai logo asli, letakkan
+  berkasnya di `src/assets/images/` lalu isi kolom `logo` pada mitra yang
+  bersangkutan.
+- **Metaforanya laut.** Dua arus SVG mengapit kedua nama, lalu melebur
+  menjadi satu arus yang mengalir melewati tanda `×`. Digambar lewat dash
+  offset — tidak perlu video untuk gerakan sesederhana ini.
+
+Di desktop panggungnya menempel selama ±140svh sambil urutan enam tahapnya
+digerakkan `scrub`, jadi menggulir balik benar-benar memisahkan kembali
+kedua arus itu. Di bawah `lg` panggung itu tidak menempel dan animasinya
+diganti reveal biasa — bagian ini tidak boleh menjadi panjang hanya demi
+animasi. Saat `prefers-reduced-motion` aktif, jejak gulirnya dikembalikan
+ke tinggi isinya (±1.600px, bukan ±3.100px) supaya tidak ada gulir mati.
+
 ## Konten yang masih placeholder
 
 Bagian berikut sengaja **tidak** diisi angka atau tanggal karangan. Ganti
@@ -224,9 +249,22 @@ Beberapa keputusan yang perlu diketahui sebelum menyentuh bagian ini:
   memakai `gsap.quickTo`; status aktif pada timeline kegiatan dan indikator
   bagian ditulis sebagai atribut `data-active` di DOM, lalu ditanggapi CSS.
 - **`position: sticky` mati bila salah satu induknya meng-clip.** Karena itu
-  `OceanTransition`, `FinalTransition`, dan section kegiatan tidak memakai
-  `overflow-hidden` di tingkat section; lapis dekoratifnya di-clip di wadah
-  sendiri.
+  `OceanTransition`, `FinalTransition`, section kegiatan, dan section
+  kolaborasi tidak memakai `overflow-hidden` di tingkat section; lapis
+  dekoratifnya di-clip di wadah sendiri. Ini jebakan yang paling sering
+  terulang di proyek ini — periksa lebih dulu setiap kali sebuah panggung
+  sticky tampak ikut tergulir pergi.
+- **Jangan menyusun panggung dari elemen absolut berpersentase tetap.**
+  Dua elemen yang sama-sama `absolute` pada `top: 44%` dan `bottom: 8%`
+  tidak pernah dijamin saling menghindar — pada layar yang lebih pendek
+  keduanya bertabrakan, dan itu persis yang terjadi di panggung
+  kolaborasi. Alur normal jauh lebih kuat: elemen bersaudara tidak mungkin
+  bertindih, dan elemen ber-`opacity: 0` tetap memakan ruang sehingga
+  komposisinya juga tidak bergeser saat animasinya berjalan.
+- **Ukuran di panggung yang menempel diikat ke tinggi layar, bukan hanya
+  lebarnya.** `clamp(2.25rem, min(7vw, 11vh), 5.5rem)` membuat tipografi
+  besar menyusut pada layar pendek, sehingga komposisinya tetap muat
+  sampai tinggi 640px. Diuji menyapu 34 kombinasi ukuran.
 - **Jangan membuat ScrollTrigger untuk elemen yang sedang `display: none`.**
   Elemen berukuran nol membuat start dan end jatuh di titik yang sama dan
   langsung terpicu. `createImageReveal` dan `createStoryParallax` menyaring

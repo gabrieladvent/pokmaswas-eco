@@ -270,6 +270,25 @@
   [data-story-chapters] {
     grid-column: 1 / -1;
   }
+
+  /*
+   * Bagian kolaborasi menempel selama sekitar 140svh sambil menjalankan
+   * urutan bertahapnya. Tanpa animasi, jarak itu berubah menjadi gulir
+   * mati dengan layar yang tidak berubah sama sekali — jadi jejaknya
+   * dikembalikan ke tinggi isinya dan seluruh isinya mengalir biasa.
+   */
+  [data-collab-track] {
+    height: auto !important;
+  }
+
+  [data-collab-stage] {
+    position: static !important;
+    height: auto !important;
+  }
+
+  [data-collab-copy] {
+    position: static !important;
+  }
 }
 
 /* ------------------------------------------------------------------ *
