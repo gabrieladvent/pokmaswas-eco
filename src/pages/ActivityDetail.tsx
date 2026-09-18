@@ -16,6 +16,7 @@ import { ActivityChapter } from '@/components/activities/ActivityChapter'
 import { ActivityImage } from '@/components/activities/ActivityImage'
 import { ActivityLightbox } from '@/components/activities/ActivityLightbox'
 import { Container } from '@/components/common/Container'
+import { PageMeta } from '@/components/common/PageMeta'
 import { Section } from '@/components/common/Section'
 import { findActivityBySlug, relatedActivities } from '@/data/activities'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
@@ -51,6 +52,10 @@ export default function ActivityDetail() {
   if (!activity) {
     return (
       <Section tone="deep" className="flex min-h-[70svh] items-center">
+        <PageMeta
+          title="Catatan tidak ditemukan — Pokmaswas San Dominggo"
+          description="Kegiatan yang Anda cari mungkin sudah dipindahkan atau tautannya keliru."
+        />
         <Container width="default" className="text-center">
           <p className="font-body text-[0.6875rem] tracking-[0.28em] text-seafoam uppercase">
             404
@@ -76,6 +81,16 @@ export default function ActivityDetail() {
 
   return (
     <>
+      {/*
+        Tautan kegiatan paling sering dibagikan lewat pesan singkat, dan
+        yang muncul di sana adalah judul serta deskripsi halaman ini —
+        bukan judul beranda.
+      */}
+      <PageMeta
+        title={`${activity.title} — Pokmaswas San Dominggo`}
+        description={activity.excerpt}
+      />
+
       {/* Hero */}
       <section
         ref={heroRef}
@@ -156,7 +171,12 @@ export default function ActivityDetail() {
                         imageFirst ? 'lg:col-start-7' : 'lg:col-start-1',
                       )}
                     >
-                      <ActivityChapter chapter={chapter} index={index} showInlinePhoto={false} />
+                      <ActivityChapter
+                        chapter={chapter}
+                        index={index}
+                        showInlinePhoto={false}
+                        headingLevel={2}
+                      />
                     </div>
 
                     {chapter.image ? (
@@ -215,7 +235,7 @@ export default function ActivityDetail() {
 
             <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => (
-                <ActivityCard key={item.id} activity={item} variant="preview" />
+                <ActivityCard key={item.id} activity={item} variant="preview" headingLevel={3} />
               ))}
             </div>
           </Container>

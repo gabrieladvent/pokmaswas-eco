@@ -1,3 +1,6 @@
+import { useRef } from 'react'
+
+import { useScrollVelocityDrift } from '@/hooks/useScrollVelocityDrift'
 import { cn } from '@/lib/utils'
 
 const BUBBLES = [
@@ -45,8 +48,15 @@ export interface UnderwaterFXProps {
  *
  * Setiap animasi dibungkus `motion-safe`, sehingga saat pengunjung minta
  * gerak dikurangi yang tersisa hanyalah tekstur diam, bukan layar kosong.
+ *
+ * Seluruh isinya dibungkus satu lapisan yang ikut bergeser mengikuti
+ * kecepatan gulir: menggulir cepat menyeret airnya, lalu air mengendap
+ * kembali saat gulir berhenti.
  */
 export function UnderwaterFX({ variant = 'full', className }: UnderwaterFXProps) {
+  const driftRef = useRef<HTMLDivElement>(null)
+  useScrollVelocityDrift(driftRef)
+
   return (
     <div
       aria-hidden="true"
@@ -77,34 +87,47 @@ export function UnderwaterFX({ variant = 'full', className }: UnderwaterFXProps)
         </>
       ) : null}
 
-      {MOTES.map((mote) => (
-        <span
-          key={`${mote.left}-${mote.top}`}
-          className="absolute rounded-full bg-white/40 motion-safe:animate-[mote-drift_var(--mote-duration)_ease-in-out_var(--mote-delay)_infinite]"
-          style={{
-            left: mote.left,
-            top: mote.top,
-            width: `${mote.size}px`,
-            height: `${mote.size}px`,
-            ['--mote-duration' as string]: `${mote.duration}s`,
-            ['--mote-delay' as string]: `${mote.delay}s`,
-          }}
-        />
-      ))}
+      {/*
+        Hanya partikel yang tersuspensi yang ikut terseret kecepatan gulir.
 
-      {BUBBLES.map((bubble) => (
-        <span
-          key={bubble.left}
-          className="absolute bottom-[-8%] rounded-full border border-white/25 bg-white/10 motion-safe:animate-[bubble-rise_var(--bubble-duration)_linear_var(--bubble-delay)_infinite] motion-reduce:hidden"
-          style={{
-            left: bubble.left,
-            width: `${bubble.size}px`,
-            height: `${bubble.size}px`,
-            ['--bubble-duration' as string]: `${bubble.duration}s`,
-            ['--bubble-delay' as string]: `${bubble.delay}s`,
-          }}
-        />
-      ))}
+        Berkas cahaya dan caustic sengaja ditinggal di luar wadah ini. Secara
+        gambaran, cahaya datang dari permukaan dan tidak ikut terseret; secara
+        teknis, keduanya memakai `blur` dan `mix-blend-screen`, dan meregangkan
+        wadah yang memuatnya memaksa kedua lapisan itu digambar ulang tiap
+        frame — bukan sekadar digeser di compositor.
+
+        `-inset-y-12` memberi ruang agar geserannya tidak menyingkap tepi.
+      */}
+      <div ref={driftRef} data-fx-drift className="absolute -inset-y-12 inset-x-0 origin-center">
+        {MOTES.map((mote) => (
+          <span
+            key={`${mote.left}-${mote.top}`}
+            className="absolute rounded-full bg-white/40 motion-safe:animate-[mote-drift_var(--mote-duration)_ease-in-out_var(--mote-delay)_infinite]"
+            style={{
+              left: mote.left,
+              top: mote.top,
+              width: `${mote.size}px`,
+              height: `${mote.size}px`,
+              ['--mote-duration' as string]: `${mote.duration}s`,
+              ['--mote-delay' as string]: `${mote.delay}s`,
+            }}
+          />
+        ))}
+
+        {BUBBLES.map((bubble) => (
+          <span
+            key={bubble.left}
+            className="absolute bottom-[-8%] rounded-full border border-white/25 bg-white/10 motion-safe:animate-[bubble-rise_var(--bubble-duration)_linear_var(--bubble-delay)_infinite] motion-reduce:hidden"
+            style={{
+              left: bubble.left,
+              width: `${bubble.size}px`,
+              height: `${bubble.size}px`,
+              ['--bubble-duration' as string]: `${bubble.duration}s`,
+              ['--bubble-delay' as string]: `${bubble.delay}s`,
+            }}
+          />
+        ))}
+      </div>
     </div>
   )
 }

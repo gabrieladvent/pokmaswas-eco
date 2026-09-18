@@ -1,4 +1,4 @@
-import { MEDIA, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 import { createImageReveal } from './imageAnimations'
 import { createLineReveal, createWordReveal } from './textAnimations'
 
@@ -71,7 +71,7 @@ export function createAboutAnimation(root: HTMLElement): void {
       {
         yPercent: -10,
         ease: 'none',
-        scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: true },
+        scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: SCRUB.soft },
       },
     )
   })
@@ -104,7 +104,7 @@ export function createRolesAnimation(root: HTMLElement): void {
         start: 'top top',
         end: () => `+=${overflow()}`,
         pin: true,
-        scrub: 1,
+        scrub: SCRUB.soft,
         anticipatePin: 1,
         invalidateOnRefresh: true,
       },
@@ -115,7 +115,15 @@ export function createRolesAnimation(root: HTMLElement): void {
       gsap.to(progress, {
         scaleX: 1,
         ease: 'none',
-        scrollTrigger: { trigger: root, start: 'top top', end: () => `+=${overflow()}`, scrub: true },
+        scrollTrigger: {
+          trigger: root,
+          start: 'top top',
+          end: () => `+=${overflow()}`,
+          // Nilainya harus sama persis dengan trek kartunya. Sebelumnya
+          // bilah ini `scrub: true` sementara treknya tertinggal satu
+          // detik, jadi penanda posisi menunjuk kartu yang belum tiba.
+          scrub: SCRUB.soft,
+        },
       })
     }
 
@@ -193,7 +201,7 @@ export function createCommunityAnimation(root: HTMLElement): void {
           trigger: q('[data-chain]'),
           start: 'top 72%',
           end: 'bottom 82%',
-          scrub: 0.8,
+          scrub: SCRUB.soft,
           invalidateOnRefresh: true,
           onRefresh: () => gsap.set(path, { strokeDasharray: dashLength() }),
         },
@@ -232,11 +240,21 @@ export function createGalleryAnimation(root: HTMLElement): void {
   const items = root.querySelectorAll<HTMLElement>('[data-gallery-item]')
   if (items.length === 0) return
 
+  /*
+   * Foto mekar dari tengah, bukan berbaris dari kiri atas.
+   *
+   * `grid: 'auto'` membuat GSAP mengukur sendiri baris dan kolomnya dari
+   * posisi elemen, jadi jedanya tetap benar ketika galeri berganti dari
+   * tiga kolom ke satu kolom di layar sempit — tanpa perlu memberitahu
+   * jumlah kolomnya dari sini.
+   */
   gsap.from(items, {
     opacity: 0,
     y: 60,
-    duration: 1.2,
-    stagger: 0.08,
+    scale: 0.96,
+    duration: 1.25,
+    ease: 'expo.out',
+    stagger: { each: 0.07, grid: 'auto', from: 'center' },
     scrollTrigger: {
       trigger: root.querySelector('[data-gallery-grid]'),
       start: 'top 84%',
@@ -254,7 +272,7 @@ export function createGalleryAnimation(root: HTMLElement): void {
         {
           yPercent: 6,
           ease: 'none',
-          scrollTrigger: { trigger: item, start: 'top bottom', end: 'bottom top', scrub: true },
+          scrollTrigger: { trigger: item, start: 'top bottom', end: 'bottom top', scrub: SCRUB.soft },
         },
       )
     }

@@ -11,6 +11,8 @@ export interface ActivityCardProps {
   readonly index?: number
   readonly yearMarker?: string
   readonly variant?: 'timeline' | 'preview'
+  /** Lihat catatan yang sama di `ActivityChapter`. */
+  readonly headingLevel?: 2 | 3 | 4
 }
 
 export function ActivityCard({
@@ -18,8 +20,12 @@ export function ActivityCard({
   index = 0,
   yearMarker,
   variant = 'timeline',
+  headingLevel,
 }: ActivityCardProps) {
   const linked = hasFullStory(activity)
+
+  const PreviewHeading = `h${headingLevel ?? 4}` as const
+  const TimelineHeading = `h${headingLevel ?? 3}` as const
 
   if (variant === 'preview') {
     const body = (
@@ -35,13 +41,13 @@ export function ActivityCard({
           <p className="font-body text-[0.6875rem] tracking-[0.2em] text-turquoise uppercase">
             {activity.category}
           </p>
-          <h4 className="mt-3 flex items-start gap-2 font-display text-xl leading-snug font-bold text-deep transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-1">
+          <PreviewHeading className="mt-3 flex items-start gap-2 font-display text-xl leading-snug font-bold text-deep transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-1">
             {activity.title}
             <ArrowUpRight
               aria-hidden="true"
               className="mt-1 size-4 shrink-0 text-deep/35 transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
-          </h4>
+          </PreviewHeading>
           <p className="mt-2 font-body text-xs text-deep/45">
             {formatActivityDate(activity.date)}
           </p>
@@ -66,7 +72,7 @@ export function ActivityCard({
   }
 
   const title = (
-    <h3
+    <TimelineHeading
       className={cn(
         'font-display text-[clamp(1.375rem,2.4vw,2rem)] leading-tight font-extrabold text-deep',
         'transition-transform duration-500 ease-[var(--ease-out-expo)]',
@@ -74,7 +80,7 @@ export function ActivityCard({
       )}
     >
       {activity.title}
-    </h3>
+    </TimelineHeading>
   )
 
   return (

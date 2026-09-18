@@ -1,4 +1,4 @@
-import { MEDIA, ScrollTrigger, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, ScrollTrigger, gsap } from '@/lib/gsap'
 import { createChapterHeadingReveal, createChapterReveal } from './activityReveal'
 import { primeVisualStage, transitionToVisual, usesReducedEffects } from './activityImageTransition'
 
@@ -37,7 +37,7 @@ export function createActivityStory(root: HTMLElement): void {
           trigger: track,
           start: 'top 70%',
           end: 'bottom 70%',
-          scrub: 0.6,
+          scrub: SCRUB.tight,
           invalidateOnRefresh: true,
         },
       },
@@ -78,7 +78,7 @@ export function createStoryOutro(root: HTMLElement): void {
           trigger: outro,
           start: 'top 85%',
           end: 'top 30%',
-          scrub: 0.8,
+          scrub: SCRUB.soft,
           invalidateOnRefresh: true,
         },
       })
@@ -112,7 +112,7 @@ export function createActivityTimeline(root: HTMLElement): void {
           trigger: track,
           start: 'top 72%',
           end: 'bottom 72%',
-          scrub: 0.7,
+          scrub: SCRUB.tight,
           invalidateOnRefresh: true,
         },
       },

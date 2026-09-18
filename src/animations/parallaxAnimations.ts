@@ -1,4 +1,4 @@
-import { MEDIA, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 
 export interface ParallaxConfig {
   readonly distance?: number
@@ -20,7 +20,7 @@ export function createParallax(element: Element, config: ParallaxConfig = {}): v
           trigger: element.parentElement ?? element,
           start: 'top bottom',
           end: 'bottom top',
-          scrub: true,
+          scrub: SCRUB.soft,
           invalidateOnRefresh: true,
         },
       },

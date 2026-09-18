@@ -20,6 +20,7 @@ export interface LightboxProps {
 }
 
 export function Lightbox({ items, index, onClose, onNavigate, label }: LightboxProps) {
+  const dialogRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const item = items[index]
 
@@ -29,8 +30,17 @@ export function Lightbox({ items, index, onClose, onNavigate, label }: LightboxP
 
   useEffect(() => {
     lockScroll()
+
+    // Fokus dikembalikan ke elemen yang membuka galeri — biasanya foto
+    // atau tombol yang baru saja ditekan. Tanpa ini, menutup galeri
+    // melempar fokus kembali ke awal halaman.
+    const opener = document.activeElement
     closeRef.current?.focus({ preventScroll: true })
-    return () => unlockScroll()
+
+    return () => {
+      unlockScroll()
+      if (opener instanceof HTMLElement) opener.focus({ preventScroll: true })
+    }
   }, [])
 
   useEffect(() => {
@@ -38,7 +48,34 @@ export function Lightbox({ items, index, onClose, onNavigate, label }: LightboxP
       if (event.key === 'Escape') onClose()
       if (event.key === 'ArrowLeft') goPrev()
       if (event.key === 'ArrowRight') goNext()
+
+      /*
+       * Tab dikurung di dalam dialog.
+       *
+       * `aria-modal` hanya memberi tahu pembaca layar bahwa isi di
+       * belakangnya tidak relevan; ia tidak menghentikan Tab. Tanpa
+       * kurungan ini, menekan Tab beberapa kali memindahkan fokus ke
+       * tautan di balik lapisan gelap — tidak terlihat, tidak bisa
+       * dikembalikan tanpa menebak.
+       */
+      if (event.key !== 'Tab') return
+
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])',
+      )
+      const first = focusable?.[0]
+      const last = focusable?.[focusable.length - 1]
+      if (!first || !last) return
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
+
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
   })
@@ -47,6 +84,7 @@ export function Lightbox({ items, index, onClose, onNavigate, label }: LightboxP
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label={`${label ? `${label} — ` : ''}Foto ${index + 1} dari ${total}: ${item.caption}`}

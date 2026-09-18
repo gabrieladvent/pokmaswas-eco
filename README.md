@@ -282,6 +282,52 @@ Beberapa keputusan yang perlu diketahui sebelum menyentuh bagian ini:
   dibaca. Scrub disimpan untuk gambar dan indikator progres.
 - Blur dan parallax berat hanya berjalan di desktop lewat `gsap.matchMedia()`.
 
+## Kehalusan gulir
+
+Empat hal yang menentukan rasa gulir situs ini, dan alasan masing-masing.
+
+**Nilai `scrub` terpusat di `lib/gsap.ts`.** `SCRUB.soft` (0.75) untuk latar,
+foto, parallax, dan peralihan warna; `SCRUB.tight` (0.3) untuk apa pun yang
+sedang dibaca atau menunjukkan posisi. `scrub: true` mengikat animasi tepat
+pada posisi gulir — benar, tetapi terasa melekat pada bilah gulir. Tenggang
+kecil membuat lapisan mengendap sesaat setelah gulir berhenti.
+
+Memusatkannya menemukan satu ketidakcocokan yang nyata: trek kartu horizontal
+pada bagian Peran memakai `scrub: 1` sementara bilah posisinya `scrub: true`.
+Bilah itu menunjuk kartu yang belum tiba. Keduanya kini memakai nilai yang sama
+— itulah gunanya keduanya tidak ditulis sebagai angka lepas.
+
+**`ScrollTrigger.config({ ignoreMobileResize: true })`.** Di peramban seluler,
+bilah alamat yang muncul-hilang mengubah tinggi viewport dan memicu `resize`.
+Tanpa ini setiap trigger mengukur ulang di tengah gulir dan bagian yang menempel
+tersentak — persis saat pembaca menggulir pelan dan paling mungkin melihatnya.
+
+**Air bereaksi terhadap kecepatan gulir** (`lib/scrollVelocity.ts`). Satu
+pengukur untuk seluruh situs; lapisan berlangganan padanya. Kalau tiap lapisan
+mengukur sendiri, masing-masing membaca kecepatan pada frame berbeda dan
+lapisan yang seharusnya bergerak bersama jadi tidak sinkron.
+
+Yang ikut terseret hanya partikel tersuspensi — gelembung dan debu air. Berkas
+cahaya dan caustic ditinggal di luar wadah yang bergerak, karena keduanya
+memakai `blur` dan `mix-blend-screen`: meregangkan wadah yang memuatnya memaksa
+kedua lapisan digambar ulang tiap frame, bukan sekadar digeser di compositor.
+Memisahkannya menurunkan p99 waktu frame dari 33,3 ms ke 16,8 ms pada CPU yang
+diperlambat 4×. **Foto tidak pernah menjadi sasaran** — meregangkan foto
+dokumentasi demi efek gulir mengubah apa yang tampak terjadi di lapangan.
+
+Nilainya dibagikan sebagai angka ke pelanggan, bukan ditulis sebagai properti
+CSS di `documentElement`: mengubah variabel CSS di akar menandai seluruh pohon
+untuk dihitung ulang gayanya setiap frame.
+
+**Tirai antarhalaman** (`RouteTransition`). Perpindahan ke `/kegiatan/<slug>`
+sebelumnya adalah potongan keras. Tirainya dimainkan _setelah_ halaman baru
+terpasang, bukan sebelumnya — menahan perpindahan demi animasi berarti menunda
+halaman yang diminta pembaca. Memakai `useLayoutEffect` agar tirai sudah
+menutupi layar pada frame yang sama saat halaman baru dicat; satu frame
+terlambat berarti halaman baru sempat berkedip lebih dulu.
+
+Seluruhnya mati saat `prefers-reduced-motion: reduce`.
+
 ## Aksesibilitas & motion
 
 Saat `prefers-reduced-motion: reduce` aktif: parallax, pinned/horizontal
@@ -295,3 +341,48 @@ membawa fotonya sendiri. Seluruh konten tetap terbaca penuh.
 Kursor asli tidak pernah disembunyikan secara global — hanya di atas elemen
 yang memang digantikan cincin kursor. Lightbox dan menu seluler mendukung
 Escape, navigasi panah, dan pengembalian fokus.
+
+Setiap dialog mengurung Tab di dalam dirinya. `aria-modal` saja tidak cukup:
+atribut itu hanya memberi tahu pembaca layar bahwa isi di belakangnya tidak
+relevan, tetapi tidak menghentikan fokus keyboard berpindah ke tautan di balik
+lapisan gelap.
+
+Tingkat heading mengikuti konteksnya, bukan tampilannya. `ActivityChapter` dan
+`ActivityCard` menerima `headingLevel` karena komponen yang sama muncul di dua
+kedalaman berbeda: di beranda bab bersarang di bawah judul kegiatan, di halaman
+detail bab adalah anak langsung dari judul halaman. Ukuran hurufnya diatur kelas
+Tailwind, jadi mengubah tingkatnya tidak mengubah tampilan sama sekali.
+
+## Judul halaman & pratinjau tautan
+
+`PageMeta` menulis judul dan deskripsi langsung ke elemen yang sudah ada di
+`index.html`, bukan merender `<title>`/`<meta>` lewat pengangkatan metadata
+React 19. React tidak tahu soal tag yang sudah ada di berkas HTML, jadi tag yang
+dirender menjadi tag kedua — padahal `<head>` hanya boleh punya satu judul dan
+satu deskripsi.
+
+Yang perlu diketahui: **pratinjau tautan tidak bisa dibuat per halaman selama
+situs ini murni SPA.** Perayap WhatsApp dan Facebook tidak menjalankan
+JavaScript, jadi yang mereka baca selalu `index.html` mentah — setiap tautan
+kegiatan akan menampilkan pratinjau beranda. Memperbaikinya butuh pra-render
+saat build (mis. `vite-plugin-ssg`), bukan perubahan di sisi React.
+
+`og:url` sengaja belum diisi: nilainya harus URL absolut dan domainnya belum
+ditentukan. Tambahkan saat situs dipasang.
+
+## Memasang (deploy)
+
+`npm run build` menghasilkan `dist/`. Karena perutean ditangani di sisi klien,
+server harus mengembalikan `index.html` untuk setiap jalur yang tidak cocok
+dengan berkas — kalau tidak, memuat ulang `/kegiatan/<slug>` akan berakhir 404.
+
+- **Netlify & Cloudflare Pages** — sudah diurus `public/_redirects`.
+- **Vercel** — preset Vite-nya sudah menambahkan fallback ini sendiri.
+- **nginx** — `location / { try_files $uri $uri/ /index.html; }`
+- **Apache** — `FallbackResource /index.html`
+- **GitHub Pages** — tidak punya rewrite; salin `dist/index.html` menjadi
+  `dist/404.html` setelah build.
+
+Variabel lingkungan yang dibaca saat build: `VISITOR_COUNTER_URL` dan
+`VISITOR_COUNTER_NAMESPACE` (lihat `.env.example`). Keduanya opsional —
+tanpa itu penghitung memakai nilai bawaannya.

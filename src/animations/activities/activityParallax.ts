@@ -1,4 +1,4 @@
-import { MEDIA, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 
 export function createStoryParallax(root: Element, selector = '[data-parallax]'): void {
   const frames = Array.from(root.querySelectorAll<HTMLElement>(selector)).filter(
@@ -22,7 +22,7 @@ export function createStoryParallax(root: Element, selector = '[data-parallax]')
             trigger: frame,
             start: 'top bottom',
             end: 'bottom top',
-            scrub: true,
+            scrub: SCRUB.soft,
             invalidateOnRefresh: true,
           },
         },
@@ -44,7 +44,7 @@ export function createDetailHeroParallax(root: HTMLElement): void {
           trigger: root,
           start: 'top top',
           end: 'bottom top',
-          scrub: true,
+          scrub: SCRUB.soft,
           invalidateOnRefresh: true,
         },
       })

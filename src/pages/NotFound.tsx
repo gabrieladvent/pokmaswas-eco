@@ -2,11 +2,16 @@ import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { Container } from '@/components/common/Container'
+import { PageMeta } from '@/components/common/PageMeta'
 import { Section } from '@/components/common/Section'
 
 export default function NotFound() {
   return (
     <Section tone="deep" className="flex min-h-[70svh] items-center">
+      <PageMeta
+        title="Halaman tidak ditemukan — Pokmaswas San Dominggo"
+        description="Tautan yang Anda buka mungkin sudah berubah."
+      />
       <Container width="default" className="text-center">
         <p className="font-body text-[0.6875rem] tracking-[0.28em] text-seafoam uppercase">404</p>
         <h1 className="mt-6 text-title text-offwhite">Halaman ini tidak ditemukan.</h1>
