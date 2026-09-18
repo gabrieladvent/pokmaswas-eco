@@ -126,6 +126,20 @@
   text-wrap: initial;
 }
 
+/*
+ * Rel gulir mendatar: bilah gulirnya disembunyikan karena posisinya sudah
+ * ditandai oleh penunjuk di bawah rel. Gulirnya sendiri tetap utuh — ini
+ * hanya menyembunyikan bilahnya, bukan mematikan gerakannya.
+ */
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Hides content visually but keeps it for assistive tech. */
 @utility sr-only-focusable {
   position: absolute;
@@ -160,6 +174,18 @@
   60%,
   100% {
     transform: translateY(340%);
+  }
+}
+
+/* Permukaan laut di hero: hanyut mendatar, sangat pelan. Hanya
+   `translate3d`, jadi seluruhnya ditangani compositor. */
+@keyframes surface-drift {
+  0%,
+  100% {
+    transform: translate3d(-3.5%, 0, 0);
+  }
+  50% {
+    transform: translate3d(3.5%, 0, 0);
   }
 }
 
@@ -288,6 +314,16 @@
 
   [data-collab-copy] {
     position: static !important;
+  }
+
+  /*
+   * Penanda posisi rel kartu Peran digerakkan oleh pendengar gulir yang
+   * tidak pernah dipasang saat gerak dikurangi, jadi ia akan tertinggal
+   * kosong selamanya. Dibiarkan penuh, ia terbaca sebagai garis pemisah
+   * biasa — yang memang bentuk aslinya.
+   */
+  [data-roles-rail-progress] {
+    transform: scaleX(1) !important;
   }
 }
 

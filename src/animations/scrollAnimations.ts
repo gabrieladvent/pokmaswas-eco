@@ -1,5 +1,12 @@
 import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 import { createImageReveal } from './imageAnimations'
+import {
+  createDepthReveal,
+  createDriftReveal,
+  createLayerDrift,
+  createMaskReveal,
+  createTideReveal,
+} from './reveals'
 import { createLineReveal, createWordReveal } from './textAnimations'
 
 /* ------------------------------------------------------------------ *
@@ -35,17 +42,24 @@ export function createRevealAnimation(root: Element, config: RevealConfig = {}):
 export function createAboutAnimation(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 
+  /*
+   * Watak bagian ini: mendatar dan berpijak.
+   *
+   * Inilah satu-satunya bagian yang seluruhnya berada di darat, jadi tidak
+   * ada yang terangkat dari bawah di sini. Judulnya tersingkap ke samping
+   * dan paragrafnya hanyut masuk — bagian berikutnya, begitu pembaca masuk
+   * ke air, barulah memakai gerak vertikal.
+   */
   createRevealAnimation(root)
-  createLineReveal(root)
-  createWordReveal(root)
+  createMaskReveal(root)
   createImageReveal(root, { distance: 16 })
 
-  gsap.from(q('[data-about-body] > *'), {
-    opacity: 0,
-    y: 28,
-    duration: 1.1,
-    stagger: 0.12,
-    scrollTrigger: { trigger: q('[data-about-body]'), start: 'top 84%', once: true },
+  createDriftReveal(root, {
+    selector: '[data-about-body] > *',
+    trigger: q('[data-about-body]')[0],
+    start: 'top 84%',
+    distance: 40,
+    stagger: 0.11,
   })
 
   gsap.from(q('[data-about-detail]'), {
@@ -64,17 +78,15 @@ export function createAboutAnimation(root: HTMLElement): void {
     scrollTrigger: { trigger: q('[data-about-caption]'), start: 'top 92%', once: true },
   })
 
-  gsap.matchMedia().add(MEDIA.desktop, () => {
-    gsap.fromTo(
-      q('[data-about-detail]'),
-      { yPercent: 10 },
-      {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: SCRUB.soft },
-      },
-    )
-  })
+  /*
+   * Foto sisipan bergerak berlawanan arah dengan foto utama, jadi keduanya
+   * saling melewati alih-alih naik bersama. Dulu hanya di desktop; di
+   * tablet foto ini tampil (`sm:block`) tetapi diam, dan justru
+   * kediamannya yang membuatnya terlihat seperti tempelan.
+   */
+  for (const detail of q('[data-about-detail]')) {
+    createLayerDrift(detail, { trigger: root, distance: -20, tablet: 0.65, mobile: 0.4 })
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -82,10 +94,19 @@ export function createAboutAnimation(root: HTMLElement): void {
  * ------------------------------------------------------------------ */
 
 export function createRolesAnimation(root: HTMLElement): void {
+  /*
+   * Watak bagian ini: sinematik dan menyamping.
+   *
+   * Judulnya datang dari kejauhan — kabur lalu jernih — sebagai pembuka
+   * untuk kartu-kartu yang sebentar lagi melintas mendatar.
+   *
+   * Sebelumnya di sini ada dua panggilan `createWordReveal` yang identik.
+   * Keduanya menyasar elemen `[data-word]` yang sama, jadi tiap kata
+   * mendapat dua tween `from` yang saling menimpa: yang kedua membaca
+   * keadaan awal dari yang pertama, dan huruf-hurufnya sempat tersentak.
+   */
   createRevealAnimation(root)
-  createLineReveal(root)
-  createWordReveal(root)
-  createWordReveal(root)
+  createDepthReveal(root)
 
   const mm = gsap.matchMedia()
 
@@ -143,7 +164,50 @@ export function createRolesAnimation(root: HTMLElement): void {
   })
 
   mm.add(MEDIA.belowDesktop, () => {
-    createRevealAnimation(root, { selector: '[data-role-card]', y: 40, stagger: 0.12 })
+    const rail = root.querySelector<HTMLElement>('[data-roles-rail]')
+    const progress = root.querySelector<HTMLElement>('[data-roles-rail-progress]')
+
+    /*
+     * Rel-nya masuk sebagai satu blok, bukan kartu per kartu.
+     *
+     * Reveal berjenjang tidak masuk akal di sini: hanya kartu pertama yang
+     * ada di layar, jadi sisanya menyelesaikan animasinya di luar pandangan
+     * dan sudah diam ketika pembaca menggeser ke sana.
+     */
+    if (rail) {
+      gsap.from(rail, {
+        opacity: 0,
+        y: 44,
+        duration: 1.2,
+        ease: 'expo.out',
+        scrollTrigger: { trigger: rail, start: 'top 88%', once: true },
+      })
+    }
+
+    if (!rail || !progress) return
+
+    /*
+     * Penanda posisi dijalankan oleh gulir rel itu sendiri, bukan oleh
+     * ScrollTrigger: yang diukur di sini gerakan mendatar di dalam satu
+     * wadah, sementara ScrollTrigger mengamati gulir halaman.
+     *
+     * `quickTo` menyiapkan satu tween yang dipakai ulang — satu peristiwa
+     * gulir sentuh bisa memicu puluhan panggilan per detik, dan membuat
+     * tween baru pada tiap panggilan berarti membuang objek sebanyak itu
+     * pula.
+     */
+    gsap.set(progress, { scaleX: 0, transformOrigin: 'left center' })
+    const scaleTo = gsap.quickTo(progress, 'scaleX', { duration: 0.3, ease: 'power2.out' })
+
+    const update = (): void => {
+      const travel = rail.scrollWidth - rail.clientWidth
+      // Rel yang muat seluruhnya tidak punya posisi untuk ditandai.
+      scaleTo(travel > 0 ? gsap.utils.clamp(0, 1, rail.scrollLeft / travel) : 0)
+    }
+
+    update()
+    rail.addEventListener('scroll', update, { passive: true })
+    return () => rail.removeEventListener('scroll', update)
   })
 }
 
@@ -154,17 +218,35 @@ export function createRolesAnimation(root: HTMLElement): void {
 export function createStatsAnimation(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
 
+  /*
+   * Watak bagian ini: terangkat ke permukaan.
+   *
+   * Keempat blok tidak sekadar muncul — masing-masing terdorong naik
+   * sambil sedikit meregang, lalu garis di atasnya menarik dirinya dari
+   * kiri ke kanan.
+   */
   createRevealAnimation(root)
   createLineReveal(root)
-  createWordReveal(root)
 
-  gsap.from(q('[data-stat]'), {
-    opacity: 0,
-    y: 56,
-    duration: 1.2,
-    stagger: 0.14,
-    scrollTrigger: { trigger: q('[data-stats-grid]'), start: 'top 82%', once: true },
+  createTideReveal(root, {
+    selector: '[data-stat]',
+    trigger: q('[data-stats-grid]')[0],
+    start: 'top 82%',
+    stagger: 0.13,
   })
+
+  // Angka penandanya melayang pelan selama bagian ini terlihat, jadi
+  // keempatnya tidak berdiri sekaku kolom tabel.
+  for (const [index, marker] of q('[data-stat-marker]').entries()) {
+    createLayerDrift(marker, {
+      trigger: q('[data-stats-grid]')[0],
+      // Ganjil-genap berlawanan arah: itulah yang membuat baris ini
+      // terbaca sebagai benda yang mengambang, bukan satu blok kaku.
+      distance: index % 2 === 0 ? 22 : -22,
+      tablet: 0.6,
+      mobile: 0.4,
+    })
+  }
 
   gsap.from(q('[data-stat-rule]'), {
     scaleX: 0,
@@ -233,9 +315,10 @@ export function createCommunityAnimation(root: HTMLElement): void {
  * ------------------------------------------------------------------ */
 
 export function createGalleryAnimation(root: HTMLElement): void {
+  /* Watak bagian ini: kedalaman. Judulnya mendekat dari jauh, lalu
+     fotonya mekar dari tengah kisi. */
   createRevealAnimation(root)
-  createLineReveal(root)
-  createWordReveal(root)
+  createDepthReveal(root)
 
   const items = root.querySelectorAll<HTMLElement>('[data-gallery-item]')
   if (items.length === 0) return
@@ -262,19 +345,14 @@ export function createGalleryAnimation(root: HTMLElement): void {
     },
   })
 
-  gsap.matchMedia().add(MEDIA.desktop, () => {
-    for (const item of items) {
-      const image = item.querySelector<HTMLElement>('[data-gallery-image]')
-      if (!image) continue
-      gsap.fromTo(
-        image,
-        { yPercent: -6 },
-        {
-          yPercent: 6,
-          ease: 'none',
-          scrollTrigger: { trigger: item, start: 'top bottom', end: 'bottom top', scrub: SCRUB.soft },
-        },
-      )
-    }
-  })
+  /*
+   * Parallax tiap foto berjalan di semua lebar layar, hanya jaraknya yang
+   * mengecil. Bingkainya sudah melebih (`inset-[-8%]`), jadi geseran
+   * sekecil ini tidak pernah menyingkap tepi foto.
+   */
+  for (const item of items) {
+    const image = item.querySelector<HTMLElement>('[data-gallery-image]')
+    if (!image) continue
+    createLayerDrift(image, { trigger: item, distance: 12, tablet: 0.6, mobile: 0.45 })
+  }
 }

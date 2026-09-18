@@ -28,7 +28,7 @@ export function AboutSection() {
 
             <SplitHeading
               lines={['Laut adalah bagian', 'dari kehidupan kami.']}
-              reveal="word"
+              reveal="mask"
               className="max-w-[14ch] text-deep"
             />
 

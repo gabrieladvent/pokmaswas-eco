@@ -36,7 +36,13 @@ export function HeroBackground() {
         </svg>
       </div>
 
-      <div data-hero-boat className="absolute top-[47.5%] left-[62%] opacity-55">
+      {/*
+        Perahu disembunyikan di layar sempit. Tingginya hanya 2.6vh — pada
+        ponsel itu sekitar dua puluh piksel, terlalu kecil untuk terbaca
+        sebagai perahu — dan posisinya jatuh tepat di belakang subtitle,
+        jadi yang tersisa hanya noda gelap di tengah kalimat.
+      */}
+      <div data-hero-boat className="absolute top-[47.5%] left-[62%] hidden opacity-55 md:block">
         <svg viewBox="0 0 60 34" className="h-[2.6vh] min-h-4 w-auto">
           <path d="M4 26h52l-7 7H11l-7-7z" className="fill-deep/70" />
           <path d="M29 3l14 20H29V3z" className="fill-deep/55" />
@@ -54,6 +60,18 @@ export function HeroBackground() {
       <div data-hero-overlay className="absolute inset-0 bg-deep opacity-0" />
 
       <div data-hero-wave className="absolute inset-x-0 bottom-[-1px] will-change-transform">
+        {/*
+          Pembungkus kedua, semata-mata supaya ada dua transform yang tidak
+          saling menimpa: yang luar dijalankan gulir lewat GSAP, yang dalam
+          berjalan sendiri lewat CSS.
+
+          Lebarnya 128% dan digeser −14%, jadi hanyut sejauh ±4% tetap
+          menyisakan tepi di kiri dan kanan. Inilah satu-satunya animasi
+          yang berputar terus di beranda: hero adalah layar yang paling
+          lama dipandangi tanpa digulir, dan permukaan laut yang benar-benar
+          diam di sana terbaca sebagai gambar, bukan air.
+        */}
+        <div className="-ml-[14%] w-[128%] motion-safe:animate-[surface-drift_24s_ease-in-out_infinite]">
         <svg
           viewBox="0 0 1440 220"
           preserveAspectRatio="none"
@@ -70,6 +88,7 @@ export function HeroBackground() {
           />
           <path d="M0 168c220 0 300 34 520 34s300-38 520-38 220 24 400 24v32H0Z" className="fill-sand" />
         </svg>
+        </div>
       </div>
     </div>
   )
