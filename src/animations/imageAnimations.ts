@@ -1,4 +1,4 @@
-import { MEDIA, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 
 export interface ImageRevealConfig {
   readonly selector?: string
@@ -64,7 +64,7 @@ export function createImageReveal(root: Element, config: ImageRevealConfig = {})
             trigger: frame,
             start: 'top bottom',
             end: 'bottom top',
-            scrub: true,
+            scrub: SCRUB.soft,
             invalidateOnRefresh: true,
           },
         },

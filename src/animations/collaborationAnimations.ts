@@ -1,4 +1,4 @@
-import { MEDIA, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 
 /** Menyiapkan panjang garis arus agar bisa "digambar" lewat dash offset. */
 function primeCurrent(path: SVGPathElement): number {
@@ -24,7 +24,7 @@ export function createCollaborationSequence(root: HTMLElement): void {
         trigger: track,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 1,
+        scrub: SCRUB.soft,
         invalidateOnRefresh: true,
       },
     })

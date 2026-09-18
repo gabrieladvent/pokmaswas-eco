@@ -1,4 +1,4 @@
-import { MEDIA, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 
 export function createHeroAnimation(root: HTMLElement): void {
   const q = gsap.utils.selector(root)
@@ -38,7 +38,7 @@ export function createHeroAnimation(root: HTMLElement): void {
       trigger: root,
       start: 'top top',
       end: 'bottom top',
-      scrub: true,
+      scrub: SCRUB.tight,
       invalidateOnRefresh: true,
     },
   })

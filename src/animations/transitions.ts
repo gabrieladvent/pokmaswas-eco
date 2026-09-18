@@ -1,4 +1,4 @@
-import { MEDIA, gsap } from '@/lib/gsap'
+import { MEDIA, SCRUB, gsap } from '@/lib/gsap'
 import { createWordReveal } from './textAnimations'
 
 export function createOceanTransition(root: HTMLElement): void {
@@ -9,7 +9,7 @@ export function createOceanTransition(root: HTMLElement): void {
       trigger: root,
       start: 'top bottom',
       end: 'bottom top',
-      scrub: true,
+      scrub: SCRUB.soft,
       invalidateOnRefresh: true,
     },
   })
@@ -60,7 +60,7 @@ export function createCtaTransition(root: HTMLElement): void {
         yPercent: 8,
         scale: 1,
         ease: 'none',
-        scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: true },
+        scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: SCRUB.soft },
       },
     )
   })
@@ -98,7 +98,7 @@ export function createFinalTransition(root: HTMLElement): void {
       trigger: root,
       start: 'top bottom',
       end: 'bottom top',
-      scrub: true,
+      scrub: SCRUB.soft,
       invalidateOnRefresh: true,
     },
   })

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import { navigation } from '@/data/navigation'
-import { ScrollTrigger, gsap } from '@/lib/gsap'
+import { SCRUB, ScrollTrigger, gsap } from '@/lib/gsap'
 import { scrollToSection } from '@/lib/scroll'
 
 export function ScrollProgress() {
@@ -40,7 +40,7 @@ export function ScrollProgress() {
             scaleY: 1,
             ease: 'none',
             transformOrigin: 'top center',
-            scrollTrigger: { trigger: document.body, start: 'top top', end: 'max', scrub: 0.4 },
+            scrollTrigger: { trigger: document.body, start: 'top top', end: 'max', scrub: SCRUB.tight },
           },
         )
       }

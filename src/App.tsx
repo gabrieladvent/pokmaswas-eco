@@ -6,10 +6,13 @@ import { Cursor } from '@/components/common/Cursor'
 import { VisitorWelcome } from '@/components/visitor/VisitorWelcome'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
+import { RouteTransition } from '@/components/layout/RouteTransition'
 import { ScrollProgress } from '@/components/layout/ScrollProgress'
 import { useLenis } from '@/hooks/useLenis'
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery'
 import { ScrollTrigger } from '@/lib/gsap'
 import { getLenis } from '@/lib/scroll'
+import { startScrollVelocity, stopScrollVelocity } from '@/lib/scrollVelocity'
 import { shouldShowWelcome } from '@/lib/visitorSession'
 import { registerVisit } from '@/services/visitorCounter'
 import ActivityDetail from '@/pages/ActivityDetail'
@@ -28,8 +31,20 @@ function AppShell() {
   const { pathname, hash } = useLocation()
   // Dinilai sekali saat dipasang: layar sambutan tampil sekali per sesi tab.
   const [welcomeVisible, setWelcomeVisible] = useState(shouldShowWelcome)
+  const reducedMotion = usePrefersReducedMotion()
 
   useLenis()
+
+  /*
+   * Satu pengukur kecepatan gulir untuk seluruh situs; lapisan air
+   * berlangganan padanya. Tidak dijalankan sama sekali saat pengunjung
+   * meminta gerak dikurangi — bukan sekadar hasilnya diabaikan.
+   */
+  useEffect(() => {
+    if (reducedMotion) return
+    startScrollVelocity()
+    return () => stopScrollVelocity()
+  }, [reducedMotion])
 
   /*
    * Kunjungan dicatat sekalipun layar sambutan dilewati — misalnya saat
@@ -88,6 +103,7 @@ function AppShell() {
 
       <Footer />
       <Cursor />
+      <RouteTransition />
 
       {welcomeVisible ? <VisitorWelcome onFinish={handleWelcomeFinish} /> : null}
     </>

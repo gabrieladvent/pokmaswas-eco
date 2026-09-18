@@ -20,6 +20,29 @@
       property="og:description"
       content="Bersama masyarakat menjaga sumber daya kelautan dan perikanan untuk generasi mendatang."
     />
+    <!--
+      Gambar pratinjau saat tautan dibagikan. Perayap WhatsApp dan Facebook
+      tidak menjalankan JavaScript, jadi tag ini harus ada di berkas HTML —
+      tidak bisa dipasang dari React.
+
+      Fotonya sama dengan latar hero, dipotong 1200x630 sesuai rasio yang
+      dipakai ruang obrolan. Ganti bersama foto hero bila nanti tersedia
+      dokumentasi asli dari lapangan.
+
+      Belum ada `og:url`: isinya harus URL absolut dan domainnya belum
+      ditentukan. Tambahkan saat situs ini dipasang.
+    -->
+    <meta
+      property="og:image"
+      content="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=75"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Ombak tenang menyapu pasir pantai saat matahari terbenam."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
