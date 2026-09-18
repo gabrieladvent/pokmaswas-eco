@@ -31,7 +31,20 @@ export function Eyebrow({ children, className }: EyebrowProps) {
  * ------------------------------------------------------------------ */
 
 export type HeadingSize = 'display' | 'title' | 'heading'
-export type RevealMode = 'line' | 'word'
+
+/**
+ * Cara judul ini masuk.
+ *
+ * Pilihannya bukan soal selera: tiap bagian memakai watak yang berbeda
+ * supaya pembaca tidak melihat gerakan yang sama berulang kali sepanjang
+ * halaman. Lihat `src/animations/reveals.ts`.
+ *
+ * - `line` — baris terangkat dari balik tepinya sendiri.
+ * - `word` — kata demi kata, untuk judul yang ingin dibaca perlahan.
+ * - `mask` — tersingkap mendatar, seperti air surut dari batu.
+ * - `depth` — datang dari kejauhan, kabur lalu jernih.
+ */
+export type RevealMode = 'line' | 'word' | 'mask' | 'depth'
 
 const SIZES: Record<HeadingSize, string> = {
   display: 'text-display',
@@ -58,8 +71,23 @@ export function SplitHeading({
 }: SplitHeadingProps) {
   return (
     <Heading id={id} className={cn(SIZES[size], className)}>
-      {lines.map((line) =>
-        reveal === 'word' ? (
+      {lines.map((line) => {
+        if (reveal === 'mask' || reveal === 'depth') {
+          // Keduanya menganimasikan barisnya utuh — `clip-path` pada mask,
+          // skala dan blur pada depth — jadi tidak perlu dipecah lebih
+          // kecil, dan tidak butuh pembungkus `overflow-hidden`.
+          return (
+            <span
+              key={line}
+              {...(reveal === 'mask' ? { 'data-mask': '' } : { 'data-depth': '' })}
+              className="block"
+            >
+              {line}
+            </span>
+          )
+        }
+
+        return reveal === 'word' ? (
           <span key={line} className="block">
             {line.split(' ').map((word, index) => (
               <span
@@ -79,8 +107,8 @@ export function SplitHeading({
               {line}
             </span>
           </span>
-        ),
-      )}
+        )
+      })}
     </Heading>
   )
 }

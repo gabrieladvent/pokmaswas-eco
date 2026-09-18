@@ -49,8 +49,9 @@ export function OceanStats() {
                 className="absolute inset-x-0 top-0 block h-px bg-gradient-to-r from-seafoam/70 to-transparent"
               />
               <p
+                data-stat-marker
                 aria-hidden="true"
-                className="font-display text-[clamp(3.5rem,6vw,5.5rem)] leading-none font-extrabold text-seafoam/85"
+                className="font-display text-[clamp(3.5rem,6vw,5.5rem)] leading-none font-extrabold text-seafoam/85 will-change-transform"
               >
                 {stat.marker}
               </p>

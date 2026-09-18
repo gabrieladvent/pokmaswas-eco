@@ -6,6 +6,20 @@ import { roles } from '@/data/roles'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { RoleCard } from './RoleCard'
 
+/**
+ * Lima peran, ditelusuri menyamping.
+ *
+ * Desktop menempel dan mengubah gulir vertikal menjadi gerak mendatar.
+ * Di bawah `lg` cara itu tidak dipakai: menempel di ponsel berarti
+ * merampas gulir dari pembaca, dan di layar sempit hasilnya lebih sering
+ * terasa macet daripada mengesankan.
+ *
+ * Gantinya bukan daftar bertumpuk — versi sebelumnya begitu, dan seluruh
+ * watak bagian ini hilang di layar yang justru paling banyak dipakai.
+ * Yang dipakai sekarang rel gulir mendatar dengan titik henti: gerakannya
+ * sama, tetapi yang menggerakkan adalah jari pembaca, dan gulirnya
+ * ditangani peramban sendiri — tanpa satu pun frame JavaScript.
+ */
 export function RolesSection() {
   const ref = useRef<HTMLElement>(null)
 
@@ -22,14 +36,15 @@ export function RolesSection() {
     >
       <div
         data-roles-track
-        className="flex flex-col gap-6 px-6 sm:px-8 lg:h-full lg:flex-row lg:items-center lg:gap-8 lg:px-0 lg:will-change-transform"
+        className="flex flex-col gap-8 lg:h-full lg:flex-row lg:items-center lg:gap-8 lg:will-change-transform"
       >
-        <div className="flex shrink-0 flex-col justify-center lg:h-full lg:w-[min(84vw,34rem)] lg:pl-12">
+        <div className="flex shrink-0 flex-col justify-center px-6 sm:px-8 lg:h-full lg:w-[min(84vw,34rem)] lg:px-0 lg:pl-12">
           <Eyebrow className="text-seafoam">Peran Kami</Eyebrow>
 
           <SplitHeading
             id="roles-heading"
             lines={['Apa yang', 'Kami Lakukan?']}
+            reveal="depth"
             className="max-w-[12ch] text-offwhite"
           />
 
@@ -47,11 +62,31 @@ export function RolesSection() {
           </p>
         </div>
 
-        {roles.map((role) => (
-          <RoleCard key={role.id} role={role} />
-        ))}
+        {/*
+          `lg:contents` melarutkan pembungkus ini di desktop, sehingga
+          kartu-kartunya kembali menjadi anak langsung trek dan animasi
+          pin mendatar bekerja persis seperti sebelumnya. Di bawah `lg`
+          pembungkus inilah yang menjadi rel gulirnya.
+        */}
+        <div
+          data-roles-rail
+          className="scrollbar-hide -mx-0 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-2 sm:px-8 lg:contents"
+        >
+          {roles.map((role) => (
+            <RoleCard key={role.id} role={role} />
+          ))}
+        </div>
 
         <div aria-hidden="true" className="hidden shrink-0 lg:block lg:w-12" />
+      </div>
+
+      {/* Penanda posisi di rel — hanya untuk layar sempit; desktop punya
+          bilahnya sendiri di dasar layar. */}
+      <div
+        aria-hidden="true"
+        className="mx-6 mt-6 block h-px bg-white/12 sm:mx-8 lg:hidden"
+      >
+        <span data-roles-rail-progress className="block h-full w-full origin-left scale-x-0 bg-seafoam" />
       </div>
 
       <div

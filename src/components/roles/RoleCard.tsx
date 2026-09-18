@@ -10,7 +10,7 @@ export function RoleCard({ role }: RoleCardProps) {
   return (
     <article
       data-role-card
-      className="group relative flex h-[62vh] w-full shrink-0 flex-col justify-end overflow-hidden rounded-sm lg:h-[68vh] lg:w-[min(72vw,30rem)]"
+      className="group relative flex h-[62vh] w-[82vw] shrink-0 snap-center flex-col justify-end overflow-hidden rounded-sm sm:w-[68vw] lg:h-[68vh] lg:w-[min(72vw,30rem)]"
     >
       <img
         src={role.image}

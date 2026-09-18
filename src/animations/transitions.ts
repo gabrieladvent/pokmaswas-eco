@@ -52,18 +52,30 @@ export function createCtaTransition(root: HTMLElement): void {
     scrollTrigger: { trigger: root, start: 'top 70%', once: true },
   })
 
-  gsap.matchMedia().add(MEDIA.desktop, () => {
+  /*
+   * Ajakan penutup adalah satu-satunya layar penuh setelah bagian yang
+   * menempel panjang, jadi latarnya harus terasa masih bergerak — termasuk
+   * di ponsel, tempat bagian ini justru paling sering menjadi layar
+   * terakhir yang dilihat orang.
+   */
+  const mm = gsap.matchMedia()
+
+  const drift = (travel: number) => () => {
     gsap.fromTo(
       q('[data-cta-image]'),
-      { yPercent: -8, scale: 1.14 },
+      { yPercent: -travel, scale: 1.14 },
       {
-        yPercent: 8,
+        yPercent: travel,
         scale: 1,
         ease: 'none',
         scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: SCRUB.soft },
       },
     )
-  })
+  }
+
+  mm.add(MEDIA.desktop, drift(8))
+  mm.add(MEDIA.tablet, drift(5))
+  mm.add(MEDIA.mobile, drift(3.5))
 }
 
 export function createNavbarTransition(

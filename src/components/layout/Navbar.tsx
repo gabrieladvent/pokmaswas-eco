@@ -5,15 +5,18 @@ import { useLocation } from 'react-router-dom'
 import { createNavbarTransition } from '@/animations'
 import { navigation } from '@/data/navigation'
 import { site } from '@/data/site'
-import { ScrollTrigger, gsap } from '@/lib/gsap'
+import { gsap } from '@/lib/gsap'
+import { useActiveSection } from '@/hooks/useActiveSection'
 import { useSectionNavigation } from '@/hooks/useSectionNavigation'
+import { refreshSectionSpy } from '@/lib/sectionSpy'
 import { cn } from '@/lib/utils'
 import { MobileMenu } from './MobileMenu'
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
-  const [activeHref, setActiveHref] = useState<string>('')
   const [menuOpen, setMenuOpen] = useState(false)
+  // Diamati satu kali untuk seluruh situs; lihat `lib/sectionSpy`.
+  const activeHref = useActiveSection()
   const toggleRef = useRef<HTMLButtonElement>(null)
   const goToSection = useSectionNavigation()
   const { pathname } = useLocation()
@@ -25,31 +28,18 @@ export function Navbar() {
     return () => ctx.revert()
   }, [])
 
+  /*
+   * Bagian yang diamati ikut berganti bersama rute, jadi pengamatnya
+   * dibangun ulang setiap kali halaman berpindah.
+   *
+   * Penundaan satu putaran diperlukan: pada saat efek ini berjalan, React
+   * baru saja memasang halaman barunya dan peramban belum menghitung tata
+   * letaknya, jadi mengukur sekarang berarti mengukur tinggi yang belum
+   * final.
+   */
   useLayoutEffect(() => {
-    setActiveHref('')
-
-    const ctx = gsap.context(() => {
-      for (const item of navigation) {
-        const target = document.querySelector(item.href)
-        if (!target) continue
-
-        ScrollTrigger.create({
-          trigger: target,
-          start: 'top center',
-          end: 'bottom center',
-          onToggle: (self) => {
-            if (self.isActive) setActiveHref(item.href)
-          },
-        })
-      }
-    })
-
-    const refresh = window.setTimeout(() => ScrollTrigger.refresh(), 0)
-
-    return () => {
-      window.clearTimeout(refresh)
-      ctx.revert()
-    }
+    const timer = window.setTimeout(refreshSectionSpy, 0)
+    return () => window.clearTimeout(timer)
   }, [pathname])
 
   const handleNavigate = (event: React.MouseEvent, href: string): void => {

@@ -40,6 +40,7 @@ export function GallerySection() {
             <Eyebrow className="text-seafoam">Galeri</Eyebrow>
             <SplitHeading
               lines={['Laut yang', 'kami jaga.']}
+              reveal="depth"
               className="max-w-[13ch] text-offwhite"
             />
           </div>

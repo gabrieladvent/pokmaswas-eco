@@ -59,20 +59,37 @@ export function createHeroAnimation(root: HTMLElement): void {
     .to(q('[data-hero-deep]'), { opacity: 1, ease: 'none' }, 0)
     .to(q('[data-hero-overlay]'), { opacity: 0.55, ease: 'none' }, 0)
 
+  /*
+   * Lapisan kedalaman.
+   *
+   * Semua lapisan berjalan di semua lebar layar; yang berbeda hanya
+   * amplitudonya. Versi sebelumnya mematikan atmosfer, garis cakrawala,
+   * dan perahu di bawah 1024px — dan karena sebagian besar pembaca membuka
+   * situs ini dari ponsel, merekalah yang justru tidak pernah melihat hero
+   * ini punya kedalaman sama sekali.
+   *
+   * Pengali ponsel sengaja tidak sekadar setengah: pada layar setinggi
+   * 700px, geseran yang sama dalam persen menempuh jarak piksel yang jauh
+   * lebih pendek, jadi yang dipangkas cukup sepertiganya.
+   */
   const mm = gsap.matchMedia()
 
-  mm.add(MEDIA.desktop, () => {
+  const depth = (scale: number) => () => {
     scroll
-      .to(q('[data-hero-atmos]'), { yPercent: 6, ease: 'none' }, 0)
-      .to(q('[data-hero-horizon]'), { yPercent: 12, ease: 'none' }, 0)
-      .to(q('[data-hero-far]'), { yPercent: 16, ease: 'none' }, 0)
-      .to(q('[data-hero-boat]'), { yPercent: 26, xPercent: -8, ease: 'none' }, 0)
-      .to(q('[data-hero-wave]'), { yPercent: -38, rotate: 0.4, ease: 'none' }, 0)
-  })
+      .to(q('[data-hero-atmos]'), { yPercent: 6 * scale, ease: 'none' }, 0)
+      .to(q('[data-hero-horizon]'), { yPercent: 12 * scale, ease: 'none' }, 0)
+      .to(q('[data-hero-far]'), { yPercent: 16 * scale, ease: 'none' }, 0)
+      .to(q('[data-hero-boat]'), { yPercent: 26 * scale, xPercent: -8 * scale, ease: 'none' }, 0)
+      .to(
+        q('[data-hero-wave]'),
+        // Rotasi hanya di desktop: pada lebar ponsel, memutar pita ombak
+        // setinggi 16vh sebesar 0.4° menyingkap sudutnya dari tepi layar.
+        { yPercent: -38 * scale, ...(scale === 1 ? { rotate: 0.4 } : {}), ease: 'none' },
+        0,
+      )
+  }
 
-  mm.add(MEDIA.belowDesktop, () => {
-    scroll
-      .to(q('[data-hero-far]'), { yPercent: 8, ease: 'none' }, 0)
-      .to(q('[data-hero-wave]'), { yPercent: -14, ease: 'none' }, 0)
-  })
+  mm.add(MEDIA.desktop, depth(1))
+  mm.add(MEDIA.tablet, depth(0.72))
+  mm.add(MEDIA.mobile, depth(0.55))
 }
